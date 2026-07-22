@@ -1,0 +1,5914 @@
+{
+  "name": "sliver_ep1",
+  "device": {
+    "preferred_serial": "127.0.0.1:16416",
+    "resolution": {
+      "width": 1280,
+      "height": 720
+    }
+  },
+  "controls": {
+    "jump": {
+      "x": 160,
+      "y": 635
+    },
+    "slide": {
+      "x": 1115,
+      "y": 635
+    }
+  },
+  "sync": {
+    "mode": "auto_pause_icon",
+    "template_path": "templates/default_pause_1280x720.png",
+    "roi": {
+      "x": 1165,
+      "y": 5,
+      "width": 62,
+      "height": 62
+    },
+    "poll_ms": 20,
+    "threshold": 0.82,
+    "consecutive_matches": 2,
+    "timeout_seconds": 25,
+    "offset_ms": 0,
+    "manual_fallback": true
+  },
+  "post_game": {
+    "enabled": true,
+    "mode": "xp_result",
+    "template_path": "templates/default_result_xp_1280x720.png",
+    "roi": {
+      "x": 155,
+      "y": 450,
+      "width": 130,
+      "height": 75
+    },
+    "poll_ms": 700,
+    "threshold": 0.86,
+    "consecutive_matches": 3,
+    "min_gameplay_seconds": 15,
+    "timeout_seconds": 45,
+    "pause_absent_threshold": 0.8
+  },
+  "recording": {
+    "rapid_tap_to_hold": true,
+    "rapid_tap_gap_ms": 180
+  },
+  "playback": {
+    "repeat_count": 1,
+    "loop_forever": false,
+    "loop_interval_ms": 3000,
+    "pre_sync_extra_ms": 0,
+    "sync_each_loop": true
+  },
+  "stats": {
+    "play_count": 13,
+    "last_played_at": "2026-07-20T12:02:37+07:00"
+  },
+  "events": [
+    {
+      "id": "evt_0006",
+      "at": 0.610635,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0001",
+      "at": 1.135344,
+      "phase": "pre_sync",
+      "event_class": "required",
+      "type": "action",
+      "action": "tap",
+      "chance": 100,
+      "jitter_ms": 0,
+      "x": 927,
+      "y": 647
+    },
+    {
+      "id": "evt_0007",
+      "at": 1.164362,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0008",
+      "at": 1.766886,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0009",
+      "at": 2.290176,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0002",
+      "at": 2.599185,
+      "phase": "pre_sync",
+      "event_class": "required",
+      "type": "action",
+      "action": "tap",
+      "chance": 100,
+      "jitter_ms": 0,
+      "x": 514,
+      "y": 600
+    },
+    {
+      "id": "evt_0010",
+      "at": 2.82171,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0011",
+      "at": 3.296191,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0012",
+      "at": 3.727544,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0003",
+      "at": 3.94824,
+      "phase": "pre_sync",
+      "event_class": "required",
+      "type": "action",
+      "action": "tap",
+      "chance": 100,
+      "jitter_ms": 0,
+      "x": 1101,
+      "y": 190
+    },
+    {
+      "id": "evt_0575",
+      "at": 4.033937,
+      "phase": "post_game",
+      "event_class": "required",
+      "type": "action",
+      "action": "tap",
+      "chance": 100,
+      "jitter_ms": 0,
+      "x": 463,
+      "y": 593
+    },
+    {
+      "id": "evt_0013",
+      "at": 4.235678,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0014",
+      "at": 4.84994,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0004",
+      "at": 5.337907,
+      "phase": "pre_sync",
+      "event_class": "required",
+      "type": "action",
+      "action": "tap",
+      "chance": 100,
+      "jitter_ms": 0,
+      "x": 593,
+      "y": 595
+    },
+    {
+      "id": "evt_0015",
+      "at": 5.350219,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0576",
+      "at": 5.71471,
+      "phase": "post_game",
+      "event_class": "required",
+      "type": "action",
+      "action": "tap",
+      "chance": 100,
+      "jitter_ms": 0,
+      "x": 601,
+      "y": 591
+    },
+    {
+      "id": "evt_0016",
+      "at": 5.877187,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0017",
+      "at": 6.559543,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0577",
+      "at": 6.718996,
+      "phase": "post_game",
+      "event_class": "required",
+      "type": "action",
+      "action": "tap",
+      "chance": 100,
+      "jitter_ms": 0,
+      "x": 631,
+      "y": 611
+    },
+    {
+      "id": "evt_0018",
+      "at": 7.264922,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0019",
+      "at": 7.936073,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0020",
+      "at": 8.136536,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0578",
+      "at": 8.945176,
+      "phase": "post_game",
+      "event_class": "required",
+      "type": "action",
+      "action": "tap",
+      "chance": 100,
+      "jitter_ms": 0,
+      "x": 631,
+      "y": 611
+    },
+    {
+      "id": "evt_0021",
+      "at": 9.548756,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0022",
+      "at": 9.780778,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0023",
+      "at": 11.282113,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "slide",
+      "duration_ms": 378,
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0005",
+      "at": 12.395585,
+      "phase": "pre_sync",
+      "event_class": "required",
+      "type": "action",
+      "action": "tap",
+      "chance": 100,
+      "jitter_ms": 0,
+      "x": 918,
+      "y": 587
+    },
+    {
+      "id": "evt_0024",
+      "at": 12.496768,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0025",
+      "at": 13.711099,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "slide",
+      "duration_ms": 1160,
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0026",
+      "at": 15.604189,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0027",
+      "at": 16.521045,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0028",
+      "at": 17.264152,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0029",
+      "at": 17.791719,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0030",
+      "at": 18.221311,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0031",
+      "at": 18.774963,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0032",
+      "at": 19.271809,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0033",
+      "at": 19.777144,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0034",
+      "at": 20.208383,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0035",
+      "at": 20.698201,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0036",
+      "at": 21.13875,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0037",
+      "at": 21.48956,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0038",
+      "at": 22.180872,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0039",
+      "at": 22.703813,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0040",
+      "at": 23.507144,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0041",
+      "at": 24.047715,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0042",
+      "at": 24.805812,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0043",
+      "at": 25.32391,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0044",
+      "at": 25.808944,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0045",
+      "at": 26.421266,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0046",
+      "at": 26.968305,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0047",
+      "at": 27.541972,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0048",
+      "at": 27.901899,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0049",
+      "at": 28.601329,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0050",
+      "at": 28.829168,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0051",
+      "at": 29.502268,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0052",
+      "at": 30.057193,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0053",
+      "at": 30.58298,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0054",
+      "at": 31.178157,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0055",
+      "at": 31.740856,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0056",
+      "at": 32.287647,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0057",
+      "at": 32.774244,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0058",
+      "at": 33.255854,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0059",
+      "at": 35.730414,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0060",
+      "at": 35.96191,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0061",
+      "at": 37.407348,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "slide",
+      "duration_ms": 1709,
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0062",
+      "at": 40.276831,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "slide",
+      "duration_ms": 1331,
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0063",
+      "at": 41.898281,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0064",
+      "at": 42.141155,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0065",
+      "at": 43.35927,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0066",
+      "at": 43.60599,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0067",
+      "at": 44.340669,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0068",
+      "at": 44.763711,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0069",
+      "at": 45.223014,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0070",
+      "at": 45.695459,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0071",
+      "at": 46.115267,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0072",
+      "at": 46.60021,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0073",
+      "at": 47.068515,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0074",
+      "at": 47.554499,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0075",
+      "at": 48.012055,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0076",
+      "at": 48.497874,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0077",
+      "at": 49.00925,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0078",
+      "at": 49.532855,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0079",
+      "at": 50.05735,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0080",
+      "at": 50.561939,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0081",
+      "at": 51.066951,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0082",
+      "at": 51.558274,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0083",
+      "at": 52.072205,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0084",
+      "at": 53.063891,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0085",
+      "at": 53.587238,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0086",
+      "at": 54.103668,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0087",
+      "at": 54.543694,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0088",
+      "at": 55.068745,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "slide",
+      "duration_ms": 318,
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0089",
+      "at": 55.488313,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0090",
+      "at": 56.058535,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0091",
+      "at": 57.580507,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0092",
+      "at": 58.117316,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0093",
+      "at": 58.726143,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0094",
+      "at": 59.290381,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0095",
+      "at": 59.840265,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0096",
+      "at": 60.413296,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0097",
+      "at": 61.044413,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0098",
+      "at": 61.647933,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0099",
+      "at": 62.18374,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0100",
+      "at": 63.493191,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0101",
+      "at": 65.212697,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0102",
+      "at": 65.421522,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0103",
+      "at": 66.212849,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0104",
+      "at": 66.778276,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0105",
+      "at": 66.99631,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0106",
+      "at": 67.862666,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0107",
+      "at": 68.471504,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0108",
+      "at": 69.320188,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0109",
+      "at": 69.940118,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0110",
+      "at": 70.128968,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0111",
+      "at": 70.499083,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "slide",
+      "duration_ms": 849,
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0112",
+      "at": 71.545991,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0113",
+      "at": 72.088293,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0114",
+      "at": 72.623282,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0115",
+      "at": 73.185694,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0116",
+      "at": 73.700234,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0117",
+      "at": 74.192496,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0118",
+      "at": 74.660556,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0119",
+      "at": 75.293636,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0120",
+      "at": 75.820431,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0121",
+      "at": 76.410512,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0122",
+      "at": 76.962207,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0123",
+      "at": 77.520825,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0124",
+      "at": 78.087027,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0125",
+      "at": 78.503237,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0126",
+      "at": 79.010465,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0127",
+      "at": 79.487117,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0128",
+      "at": 79.959885,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0129",
+      "at": 80.388787,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0130",
+      "at": 81.461723,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0131",
+      "at": 81.968308,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0132",
+      "at": 82.468982,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "slide",
+      "duration_ms": 548,
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0133",
+      "at": 83.626815,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0134",
+      "at": 83.999958,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0135",
+      "at": 84.610179,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "slide",
+      "duration_ms": 1358,
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0136",
+      "at": 86.138291,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0137",
+      "at": 86.835312,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0138",
+      "at": 87.067417,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0139",
+      "at": 87.875011,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0140",
+      "at": 88.82229,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0141",
+      "at": 89.802121,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0142",
+      "at": 90.147379,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0143",
+      "at": 91.230521,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0144",
+      "at": 91.439937,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0145",
+      "at": 91.862052,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "slide",
+      "duration_ms": 218,
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0146",
+      "at": 92.193494,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0147",
+      "at": 92.75714,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0148",
+      "at": 93.328987,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0149",
+      "at": 93.792997,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0150",
+      "at": 95.947719,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0151",
+      "at": 96.329087,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0152",
+      "at": 96.746149,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0153",
+      "at": 97.192775,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0154",
+      "at": 97.707537,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0155",
+      "at": 98.123834,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0156",
+      "at": 98.559814,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0157",
+      "at": 99.033886,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0158",
+      "at": 99.452588,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0159",
+      "at": 99.918577,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0160",
+      "at": 100.336062,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0161",
+      "at": 100.880146,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0162",
+      "at": 101.33292,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0163",
+      "at": 101.648603,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0164",
+      "at": 102.028335,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0165",
+      "at": 102.265718,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0166",
+      "at": 102.510478,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0167",
+      "at": 102.704835,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0168",
+      "at": 102.862206,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0169",
+      "at": 103.132796,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0170",
+      "at": 103.344535,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0171",
+      "at": 103.514307,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0172",
+      "at": 103.711185,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0173",
+      "at": 103.887398,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0174",
+      "at": 104.093182,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0175",
+      "at": 104.214989,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0176",
+      "at": 104.387979,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0177",
+      "at": 104.553632,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0178",
+      "at": 104.764815,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0179",
+      "at": 104.935832,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0180",
+      "at": 105.096529,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0181",
+      "at": 105.257814,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0182",
+      "at": 105.426986,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0183",
+      "at": 105.608875,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0184",
+      "at": 105.779169,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0185",
+      "at": 105.963987,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0186",
+      "at": 106.13435,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0187",
+      "at": 106.277159,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0188",
+      "at": 106.462951,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0189",
+      "at": 106.635909,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0190",
+      "at": 106.872681,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0191",
+      "at": 107.326035,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0192",
+      "at": 107.873547,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0193",
+      "at": 114.091004,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0194",
+      "at": 114.624905,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0195",
+      "at": 115.165063,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0196",
+      "at": 115.757414,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0197",
+      "at": 116.279333,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0198",
+      "at": 116.791397,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0199",
+      "at": 117.382554,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0200",
+      "at": 118.006071,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0201",
+      "at": 118.516203,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0202",
+      "at": 119.033022,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0203",
+      "at": 119.626822,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0204",
+      "at": 120.173711,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0205",
+      "at": 120.698182,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0206",
+      "at": 121.250637,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0207",
+      "at": 121.804253,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0208",
+      "at": 122.294191,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0209",
+      "at": 122.771894,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0210",
+      "at": 123.234506,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0211",
+      "at": 123.24681,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "slide",
+      "duration_ms": 69,
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0212",
+      "at": 123.689569,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0213",
+      "at": 124.158818,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0214",
+      "at": 124.922275,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0215",
+      "at": 125.093194,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0216",
+      "at": 125.896075,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0217",
+      "at": 127.393071,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0219",
+      "at": 127.89104,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "slide",
+      "duration_ms": 977,
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0218",
+      "at": 128.864134,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0220",
+      "at": 129.040995,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0221",
+      "at": 129.516796,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "slide",
+      "duration_ms": 312,
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0222",
+      "at": 130.494481,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0223",
+      "at": 130.806064,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0224",
+      "at": 131.720989,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0225",
+      "at": 132.4084,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0226",
+      "at": 133.242607,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0227",
+      "at": 133.60888,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0228",
+      "at": 134.210437,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "slide",
+      "duration_ms": 943,
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0229",
+      "at": 135.303951,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0230",
+      "at": 136.061642,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0231",
+      "at": 136.282168,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0232",
+      "at": 137.248005,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0233",
+      "at": 138.043473,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0234",
+      "at": 138.551818,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0235",
+      "at": 138.967033,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0236",
+      "at": 139.438719,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0237",
+      "at": 139.866479,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0238",
+      "at": 140.32729,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0239",
+      "at": 140.841174,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0240",
+      "at": 141.312809,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0241",
+      "at": 142.005885,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0242",
+      "at": 142.540974,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0243",
+      "at": 142.893647,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0244",
+      "at": 143.615018,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0245",
+      "at": 144.189287,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0246",
+      "at": 144.765412,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0247",
+      "at": 145.286355,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0248",
+      "at": 145.829736,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0249",
+      "at": 146.30435,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0250",
+      "at": 146.893149,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0251",
+      "at": 147.396054,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0252",
+      "at": 147.625099,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0253",
+      "at": 148.383992,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0254",
+      "at": 149.141757,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0255",
+      "at": 149.756604,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0256",
+      "at": 150.361831,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0257",
+      "at": 150.991152,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0258",
+      "at": 151.157831,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0259",
+      "at": 154.713389,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0260",
+      "at": 155.230376,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0261",
+      "at": 155.686707,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0262",
+      "at": 156.1724,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0263",
+      "at": 156.604474,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0264",
+      "at": 157.011881,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0265",
+      "at": 157.54318,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0266",
+      "at": 158.052252,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0267",
+      "at": 158.620706,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0268",
+      "at": 159.105254,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0269",
+      "at": 159.600061,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0270",
+      "at": 160.027755,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "slide",
+      "duration_ms": 216,
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0271",
+      "at": 160.790334,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0272",
+      "at": 160.975305,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0273",
+      "at": 161.681945,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0274",
+      "at": 162.16366,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0275",
+      "at": 163.053598,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0276",
+      "at": 163.434752,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "slide",
+      "duration_ms": 633,
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0277",
+      "at": 164.111638,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0278",
+      "at": 164.774269,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0279",
+      "at": 164.960713,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0280",
+      "at": 165.473668,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0281",
+      "at": 165.958849,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0282",
+      "at": 166.490866,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0283",
+      "at": 167.299344,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0284",
+      "at": 167.572108,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0285",
+      "at": 168.053079,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0286",
+      "at": 168.505388,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0287",
+      "at": 168.939755,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0288",
+      "at": 169.400401,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0289",
+      "at": 169.828711,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0290",
+      "at": 170.207218,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0291",
+      "at": 170.648608,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0292",
+      "at": 171.093937,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0293",
+      "at": 171.494269,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0294",
+      "at": 171.968178,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0295",
+      "at": 172.468711,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0296",
+      "at": 173.080913,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0297",
+      "at": 173.559081,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0298",
+      "at": 174.356395,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0299",
+      "at": 174.843304,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0300",
+      "at": 175.175691,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0301",
+      "at": 175.804803,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0302",
+      "at": 176.320604,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0303",
+      "at": 176.847912,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0304",
+      "at": 177.33895,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0305",
+      "at": 177.840357,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0306",
+      "at": 178.097259,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0307",
+      "at": 178.584293,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "slide",
+      "duration_ms": 242,
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0308",
+      "at": 179.086989,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0309",
+      "at": 179.631926,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0310",
+      "at": 180.119268,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0311",
+      "at": 180.813463,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0312",
+      "at": 180.959999,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0313",
+      "at": 181.552218,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0314",
+      "at": 181.951817,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0315",
+      "at": 182.088067,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0316",
+      "at": 182.533467,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "slide",
+      "duration_ms": 176,
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0317",
+      "at": 182.932657,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "slide",
+      "duration_ms": 122,
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0318",
+      "at": 183.514368,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0319",
+      "at": 184.129337,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "slide",
+      "duration_ms": 111,
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0320",
+      "at": 184.311853,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "slide",
+      "duration_ms": 115,
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0321",
+      "at": 184.732535,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0322",
+      "at": 184.8893,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0323",
+      "at": 185.405318,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0324",
+      "at": 185.924172,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0325",
+      "at": 186.094808,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0326",
+      "at": 186.57197,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "slide",
+      "duration_ms": 137,
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0327",
+      "at": 187.966108,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "slide",
+      "duration_ms": 423,
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0328",
+      "at": 188.439521,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0329",
+      "at": 188.598846,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0330",
+      "at": 190.715554,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0331",
+      "at": 191.293604,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0332",
+      "at": 191.792659,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0333",
+      "at": 193.009841,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0334",
+      "at": 193.226651,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0335",
+      "at": 194.095247,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0336",
+      "at": 194.314467,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0337",
+      "at": 194.949654,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0338",
+      "at": 195.452016,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0339",
+      "at": 195.942462,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0340",
+      "at": 196.425377,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0341",
+      "at": 196.701157,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0342",
+      "at": 197.322776,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0343",
+      "at": 197.84493,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0344",
+      "at": 198.25059,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0345",
+      "at": 198.702894,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0346",
+      "at": 199.096996,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0347",
+      "at": 199.504147,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0348",
+      "at": 199.925468,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0349",
+      "at": 200.306915,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0350",
+      "at": 200.703576,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0351",
+      "at": 201.079455,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0352",
+      "at": 201.470659,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0353",
+      "at": 201.867301,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0354",
+      "at": 202.306132,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0355",
+      "at": 202.801464,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0356",
+      "at": 203.364893,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0357",
+      "at": 203.786037,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0358",
+      "at": 204.197729,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0359",
+      "at": 204.563546,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0360",
+      "at": 205.067158,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0361",
+      "at": 205.230056,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0362",
+      "at": 205.773951,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0363",
+      "at": 206.191399,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0364",
+      "at": 206.58186,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0365",
+      "at": 206.946,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0366",
+      "at": 207.339913,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0367",
+      "at": 207.756942,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0368",
+      "at": 208.34251,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0369",
+      "at": 208.828004,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0370",
+      "at": 209.327829,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0371",
+      "at": 209.829146,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0372",
+      "at": 210.26724,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0373",
+      "at": 210.846906,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0374",
+      "at": 211.403528,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0375",
+      "at": 212.538244,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0376",
+      "at": 212.7251,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0377",
+      "at": 213.263664,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0378",
+      "at": 213.698089,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0379",
+      "at": 214.479581,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0380",
+      "at": 215.095528,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0381",
+      "at": 216.5283,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0382",
+      "at": 217.018741,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0383",
+      "at": 217.587669,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0384",
+      "at": 217.808196,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0385",
+      "at": 218.339971,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0386",
+      "at": 219.01505,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0387",
+      "at": 219.287647,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0388",
+      "at": 219.759424,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0389",
+      "at": 219.940692,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0390",
+      "at": 220.524395,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0391",
+      "at": 220.846732,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0392",
+      "at": 221.458352,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0393",
+      "at": 221.980971,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0394",
+      "at": 222.466842,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0395",
+      "at": 222.969351,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0396",
+      "at": 223.501792,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0397",
+      "at": 223.983887,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0398",
+      "at": 224.536268,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0399",
+      "at": 225.028337,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0400",
+      "at": 225.508899,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0401",
+      "at": 226.055583,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0402",
+      "at": 226.579349,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0403",
+      "at": 227.035197,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0404",
+      "at": 227.493061,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0405",
+      "at": 227.982642,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0406",
+      "at": 228.423873,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0407",
+      "at": 228.861195,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0408",
+      "at": 229.285936,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0409",
+      "at": 229.652001,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0410",
+      "at": 230.103719,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0411",
+      "at": 230.662367,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0412",
+      "at": 230.882989,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0413",
+      "at": 231.314041,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "slide",
+      "duration_ms": 195,
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0414",
+      "at": 231.76701,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0415",
+      "at": 232.238635,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "slide",
+      "duration_ms": 866,
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0416",
+      "at": 233.214941,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0417",
+      "at": 234.173854,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0418",
+      "at": 234.986684,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0419",
+      "at": 235.834408,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0420",
+      "at": 236.545413,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0421",
+      "at": 237.214781,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0422",
+      "at": 237.827195,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0423",
+      "at": 238.373636,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0424",
+      "at": 238.968188,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0425",
+      "at": 239.809651,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0426",
+      "at": 240.025842,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0427",
+      "at": 240.658847,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0428",
+      "at": 240.982726,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0429",
+      "at": 241.644194,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0430",
+      "at": 241.783113,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0431",
+      "at": 242.397753,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0432",
+      "at": 242.542847,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0433",
+      "at": 243.150678,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0434",
+      "at": 243.613511,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0435",
+      "at": 243.938419,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "slide",
+      "duration_ms": 109,
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0436",
+      "at": 244.14497,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "slide",
+      "duration_ms": 89,
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0437",
+      "at": 244.309351,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "slide",
+      "duration_ms": 94,
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0438",
+      "at": 244.504401,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0439",
+      "at": 244.968181,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0440",
+      "at": 245.418615,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0441",
+      "at": 246.415614,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0442",
+      "at": 246.843959,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0443",
+      "at": 247.319853,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0444",
+      "at": 247.838914,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0445",
+      "at": 248.386481,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0446",
+      "at": 248.915649,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0447",
+      "at": 249.4301,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0448",
+      "at": 249.941199,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0449",
+      "at": 250.42774,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0450",
+      "at": 250.996252,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0451",
+      "at": 251.511575,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0452",
+      "at": 252.034334,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0453",
+      "at": 252.546777,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0454",
+      "at": 253.062346,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0455",
+      "at": 253.614393,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0456",
+      "at": 254.117302,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0457",
+      "at": 254.645687,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0458",
+      "at": 255.186581,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0459",
+      "at": 255.779736,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0460",
+      "at": 256.344548,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0461",
+      "at": 256.552679,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0462",
+      "at": 257.925545,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0463",
+      "at": 258.14849,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0464",
+      "at": 258.751248,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0465",
+      "at": 258.910707,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0466",
+      "at": 259.465304,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0467",
+      "at": 259.614817,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0468",
+      "at": 260.140167,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0469",
+      "at": 260.742119,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0470",
+      "at": 261.214206,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0471",
+      "at": 261.748321,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0472",
+      "at": 262.210169,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0473",
+      "at": 262.609399,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0474",
+      "at": 263.047671,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0475",
+      "at": 263.474188,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0476",
+      "at": 264.161535,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0477",
+      "at": 264.527854,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0478",
+      "at": 265.103609,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0479",
+      "at": 265.733711,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0480",
+      "at": 266.129909,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0481",
+      "at": 266.67602,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0482",
+      "at": 267.078982,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0483",
+      "at": 267.771582,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "slide",
+      "duration_ms": 628,
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0484",
+      "at": 268.552888,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0485",
+      "at": 268.719593,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0486",
+      "at": 269.393194,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0487",
+      "at": 269.586621,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0488",
+      "at": 270.920175,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0489",
+      "at": 271.433423,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0490",
+      "at": 272.012355,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0491",
+      "at": 272.174723,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0492",
+      "at": 272.822635,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0493",
+      "at": 273.297947,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0494",
+      "at": 273.796696,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0495",
+      "at": 274.262171,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0496",
+      "at": 274.674987,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0497",
+      "at": 275.159782,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0498",
+      "at": 275.602535,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0499",
+      "at": 276.082463,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0500",
+      "at": 276.49976,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0501",
+      "at": 277.002221,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0502",
+      "at": 277.502335,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0503",
+      "at": 278.007734,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0504",
+      "at": 278.478378,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0505",
+      "at": 279.019001,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0506",
+      "at": 279.312481,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0507",
+      "at": 279.996681,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0508",
+      "at": 280.481997,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0509",
+      "at": 280.940112,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0510",
+      "at": 281.560057,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0511",
+      "at": 282.065105,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0512",
+      "at": 282.533563,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0513",
+      "at": 283.01895,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0514",
+      "at": 283.412892,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0515",
+      "at": 283.834311,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0516",
+      "at": 284.12327,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0517",
+      "at": 284.703076,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0518",
+      "at": 284.892354,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0519",
+      "at": 285.370251,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0520",
+      "at": 285.558928,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0521",
+      "at": 286.599849,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0522",
+      "at": 286.835074,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0523",
+      "at": 287.286502,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0524",
+      "at": 288.004722,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0525",
+      "at": 288.164605,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0526",
+      "at": 289.073425,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0527",
+      "at": 289.493662,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0528",
+      "at": 289.987776,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0529",
+      "at": 290.423667,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0530",
+      "at": 291.113407,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0531",
+      "at": 291.685667,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0532",
+      "at": 292.11899,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0533",
+      "at": 292.600771,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0534",
+      "at": 293.183066,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0535",
+      "at": 293.404321,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0536",
+      "at": 294.109994,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0537",
+      "at": 294.280622,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0538",
+      "at": 294.945759,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0539",
+      "at": 295.254947,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0540",
+      "at": 295.783862,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "slide",
+      "duration_ms": 146,
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0541",
+      "at": 296.2552,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0542",
+      "at": 296.504952,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0543",
+      "at": 296.8987,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "slide",
+      "duration_ms": 1002,
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0544",
+      "at": 299.126335,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0545",
+      "at": 299.359608,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0546",
+      "at": 299.977764,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0547",
+      "at": 300.640851,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0548",
+      "at": 301.041171,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0549",
+      "at": 301.887559,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0550",
+      "at": 302.33708,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0551",
+      "at": 302.829042,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0552",
+      "at": 303.209768,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0553",
+      "at": 303.671264,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0554",
+      "at": 304.138435,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0555",
+      "at": 304.628761,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0556",
+      "at": 305.157459,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0557",
+      "at": 305.66002,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0558",
+      "at": 306.155893,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0559",
+      "at": 306.616927,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0560",
+      "at": 307.014574,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0561",
+      "at": 307.439042,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0562",
+      "at": 307.893496,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0563",
+      "at": 308.328822,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0564",
+      "at": 308.813918,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0565",
+      "at": 309.262837,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0566",
+      "at": 309.953981,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0567",
+      "at": 310.370572,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0568",
+      "at": 310.877521,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0569",
+      "at": 311.31477,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0570",
+      "at": 311.827599,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0571",
+      "at": 312.357429,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0572",
+      "at": 312.573962,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0573",
+      "at": 312.878423,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "slide",
+      "duration_ms": 373,
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0574",
+      "at": 314.574751,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "tap",
+      "chance": 100,
+      "jitter_ms": 0,
+      "x": 623,
+      "y": 370
+    }
+  ],
+  "safe_zones": [
+    {
+      "id": "zone_002",
+      "start": 56.552,
+      "end": 59.962,
+      "label": "เลือกจาก Timeline 56.552–59.962s"
+    }
+  ],
+  "schema_version": 2,
+  "created_at": "2026-07-20T11:54:14+07:00",
+  "safety": {
+    "safe_random_min_gap_ms": 250
+  }
+}

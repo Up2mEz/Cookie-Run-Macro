@@ -1,0 +1,19 @@
+{
+  "schema_version": 1,
+  "profiles": [
+    {
+      "name": "ep1",
+      "template_path": "templates/pause_ep1.png",
+      "roi": {
+        "x": 1166,
+        "y": 5,
+        "width": 62,
+        "height": 62
+      },
+      "resolution": {
+        "width": 1280,
+        "height": 720
+      }
+    }
+  ]
+}

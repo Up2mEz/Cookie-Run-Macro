@@ -1,0 +1,324 @@
+{
+  "name": "sliver_all_nofast_take_2_take",
+  "device": {
+    "preferred_serial": "127.0.0.1:16416",
+    "resolution": {
+      "width": 1280,
+      "height": 720
+    }
+  },
+  "controls": {
+    "jump": {
+      "x": 160,
+      "y": 635
+    },
+    "slide": {
+      "x": 1115,
+      "y": 635
+    }
+  },
+  "sync": {
+    "mode": "auto_pause_icon",
+    "profile_name": "ep1",
+    "template_path": "templates/pause_ep1.png",
+    "roi": {
+      "x": 1166,
+      "y": 5,
+      "width": 62,
+      "height": 62
+    },
+    "poll_ms": 20,
+    "threshold": 0.82,
+    "consecutive_matches": 5,
+    "timeout_seconds": 5,
+    "offset_ms": 0,
+    "manual_fallback": true
+  },
+  "post_game": {
+    "enabled": true,
+    "mode": "xp_result",
+    "template_path": "templates/default_result_xp_1280x720.png",
+    "roi": {
+      "x": 155,
+      "y": 450,
+      "width": 130,
+      "height": 75
+    },
+    "poll_ms": 700,
+    "threshold": 0.86,
+    "consecutive_matches": 3,
+    "min_gameplay_seconds": 15,
+    "timeout_seconds": 45,
+    "pause_absent_threshold": 0.8
+  },
+  "recording": {
+    "rapid_tap_to_hold": true,
+    "rapid_tap_gap_ms": 180
+  },
+  "playback": {
+    "repeat_count": 1,
+    "loop_forever": false,
+    "loop_interval_ms": 3000,
+    "pre_sync_extra_ms": 200,
+    "sync_each_loop": true
+  },
+  "stats": {
+    "play_count": 15,
+    "last_played_at": "2026-07-20T16:09:27+07:00"
+  },
+  "events": [
+    {
+      "id": "evt_0001",
+      "at": 2.148873,
+      "phase": "pre_sync",
+      "event_class": "required",
+      "type": "action",
+      "action": "slide",
+      "chance": 100,
+      "jitter_ms": 0,
+      "duration_ms": 199
+    },
+    {
+      "id": "evt_0003",
+      "at": 4.248666,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0004",
+      "at": 6.17095,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0005",
+      "at": 7.171503,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0002",
+      "at": 8.565597,
+      "phase": "pre_sync",
+      "event_class": "required",
+      "type": "action",
+      "action": "tap",
+      "chance": 100,
+      "jitter_ms": 0,
+      "x": 828,
+      "y": 618
+    },
+    {
+      "id": "evt_0006",
+      "at": 8.613258,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0007",
+      "at": 8.756934,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0008",
+      "at": 10.268832,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0009",
+      "at": 10.446168,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0010",
+      "at": 12.030814,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "slide",
+      "duration_ms": 321,
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0011",
+      "at": 13.38498,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "slide",
+      "duration_ms": 403,
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0012",
+      "at": 14.716823,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "slide",
+      "duration_ms": 807,
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0013",
+      "at": 16.45006,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0014",
+      "at": 17.192124,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0015",
+      "at": 17.569939,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0016",
+      "at": 18.177368,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0017",
+      "at": 18.534373,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0018",
+      "at": 18.909971,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0019",
+      "at": 20.599503,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "tap",
+      "chance": 100,
+      "jitter_ms": 0,
+      "x": 1208,
+      "y": 34
+    },
+    {
+      "id": "evt_0020",
+      "at": 21.496945,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "tap",
+      "chance": 100,
+      "jitter_ms": 0,
+      "x": 718,
+      "y": 406
+    },
+    {
+      "id": "evt_0021",
+      "at": 22.120317,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "tap",
+      "chance": 100,
+      "jitter_ms": 0,
+      "x": 718,
+      "y": 406
+    },
+    {
+      "id": "evt_0022",
+      "at": 23.46106,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "tap",
+      "chance": 100,
+      "jitter_ms": 0,
+      "x": 542,
+      "y": 603
+    }
+  ],
+  "safe_zones": [
+    {
+      "id": "zone_001",
+      "start": 30.643,
+      "end": 35.957,
+      "label": "เลือกจาก Timeline 30.643–35.957s"
+    },
+    {
+      "id": "zone_002",
+      "start": 56.552,
+      "end": 59.962,
+      "label": "เลือกจาก Timeline 56.552–59.962s"
+    }
+  ],
+  "schema_version": 2,
+  "created_at": "2026-07-20T16:07:02+07:00",
+  "safety": {
+    "safe_random_min_gap_ms": 250
+  }
+}

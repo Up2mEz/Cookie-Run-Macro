@@ -1,0 +1,17 @@
+{
+  "adb_path": "D:\\Program Files\\Netease\\MuMuPlayer\\nx_main\\adb.exe",
+  "candidate_ports": [
+    5557,
+    16416
+  ],
+  "selected_serial": "127.0.0.1:16416",
+  "last_pattern": "",
+  "expected_resolution": {
+    "width": 1280,
+    "height": 720
+  },
+  "window": {
+    "width": 956,
+    "height": 730
+  }
+}
