@@ -84,22 +84,26 @@ class TimelineEditor(ttk.LabelFrame):
         on_create: Callable[[float, float], None],
         on_update: Callable[[str, float, float], None],
         on_select: Callable[[str | None], None] | None = None,
+        on_event_select: Callable[[str], None] | None = None,
         on_delete: Callable[[str], None] | None = None,
     ) -> None:
         super().__init__(parent, text="Timeline — ลากช่วงหลัง Sync เพื่อสร้าง Safe Zone", padding=7)
         self.on_create = on_create
         self.on_update = on_update
         self.on_select = on_select
+        self.on_event_select = on_event_select
         self.on_delete = on_delete
         self.pattern: dict = {"events": [], "safe_zones": []}
         self.pixels_per_second = 70.0
         self.selection_start: float | None = None
         self.selection_end: float | None = None
         self.selected_zone_id: str | None = None
+        self.selected_event_id: str | None = None
         self.dragging = False
         self.resize_edge: str | None = None
         self.playhead_phase: str | None = None
         self.playhead_at = 0.0
+        self._drag_refresh_job: str | None = None
 
         toolbar = ttk.Frame(self)
         toolbar.pack(fill="x", pady=(0, 5))
@@ -151,6 +155,7 @@ class TimelineEditor(ttk.LabelFrame):
         self.selection_start = None
         self.selection_end = None
         self.selected_zone_id = None
+        self.selected_event_id = None
         self.create_button.configure(state="disabled", text="สร้าง Safe Zone")
         self.update_button.configure(state="disabled")
         self.delete_button.configure(state="disabled")
@@ -197,6 +202,11 @@ class TimelineEditor(ttk.LabelFrame):
         self.selection_end = float(zone["end"]) if zone else None
         self._draw()
         self._update_info()
+
+    def select_event(self, event_id: str | None) -> None:
+        exists = any(str(event.get("id")) == str(event_id) for event in self.pattern.get("events", []))
+        self.selected_event_id = str(event_id) if event_id and exists else None
+        self._draw()
 
     def _zoom(self, factor: float) -> None:
         self.pixels_per_second = max(25.0, min(320.0, self.pixels_per_second * factor))
@@ -245,8 +255,11 @@ class TimelineEditor(ttk.LabelFrame):
             x = self._time_to_x(float(event.get("at", 0)))
             action = str(event.get("action", "random"))
             color = ACTION_COLORS.get(action, "#475569")
-            self.canvas.create_line(x, y1, x, y2, fill=color, width=3)
-            self.canvas.create_polygon(x - 4, y1, x + 4, y1, x, y1 + 7, fill=color, outline="")
+            selected = str(event.get("id")) == self.selected_event_id
+            tags = (f"event:{event.get('id', '')}", "event")
+            self.canvas.create_line(x, y1, x, y2, fill=color, width=6 if selected else 3, tags=tags)
+            size = 7 if selected else 4
+            self.canvas.create_polygon(x - size, y1, x + size, y1, x, y1 + size + 3, fill=color, outline="#111827" if selected else "", tags=tags)
 
         if self.selection_start is not None and self.selection_end is not None:
             x1 = self._time_to_x(min(self.selection_start, self.selection_end))
@@ -272,9 +285,64 @@ class TimelineEditor(ttk.LabelFrame):
         at = self._x_to_time(canvas_x)
         return next((zone for zone in self.pattern.get("safe_zones", []) if float(zone["start"]) <= at <= float(zone["end"])), None)
 
+    def _zone_edge_at(self, canvas_x: float, canvas_y: float, *, tolerance: float = 9.0) -> tuple[dict, str] | None:
+        """Return the nearest Zone edge, even when an Event occupies the same pixel."""
+        if not 92 <= canvas_y <= 150:
+            return None
+        candidates: list[tuple[float, dict, str]] = []
+        for zone in self.pattern.get("safe_zones", []):
+            for edge, seconds in (("start", zone["start"]), ("end", zone["end"])):
+                distance = abs(self._time_to_x(float(seconds)) - canvas_x)
+                if distance <= tolerance:
+                    candidates.append((distance, zone, edge))
+        if not candidates:
+            return None
+        _, zone, edge = min(candidates, key=lambda item: item[0])
+        return zone, edge
+
+    def _event_at(self, canvas_x: float, canvas_y: float) -> dict | None:
+        candidates: list[tuple[float, dict]] = []
+        for event in self.pattern.get("events", []):
+            phase = str(event.get("phase", "synced"))
+            y1, y2 = PHASE_LANES.get(phase, PHASE_LANES["synced"])
+            if not y1 <= canvas_y <= y2:
+                continue
+            distance = abs(self._time_to_x(float(event.get("at", 0))) - canvas_x)
+            if distance <= 8:
+                candidates.append((distance, event))
+        return min(candidates, key=lambda item: item[0])[1] if candidates else None
+
     def _press(self, event: tk.Event) -> None:
         x = self.canvas.canvasx(event.x)
         y = self.canvas.canvasy(event.y)
+        edge_hit = self._zone_edge_at(x, y)
+        if edge_hit:
+            zone, edge = edge_hit
+            self.selected_event_id = None
+            self.selected_zone_id = str(zone["id"])
+            self.selection_start = float(zone["start"])
+            self.selection_end = float(zone["end"])
+            self.resize_edge = edge
+            self.dragging = True
+            self.update_button.configure(state="normal")
+            if self.on_select:
+                self.on_select(self.selected_zone_id)
+            self._draw()
+            self._update_info()
+            return
+        timeline_event = self._event_at(x, y)
+        if timeline_event:
+            self.selected_event_id = str(timeline_event.get("id"))
+            self.dragging = False
+            self.resize_edge = None
+            if self.on_event_select:
+                self.on_event_select(self.selected_event_id)
+            self._draw()
+            self.info_var.set(
+                f"Event {self.selected_event_id} • {timeline_event.get('phase', 'synced')} • "
+                f"{float(timeline_event.get('at', 0)):.3f}s • ดับเบิลคลิกแถวด้านล่างเพื่อแก้ไข"
+            )
+            return
         zone = self._zone_at(x, y)
         if zone:
             self.selected_zone_id = str(zone["id"])
@@ -299,6 +367,21 @@ class TimelineEditor(ttk.LabelFrame):
         self._draw()
         self._update_info()
 
+    def _schedule_drag_refresh(self) -> None:
+        """Coalesce dense Windows mouse-motion events into one frame."""
+        if self._drag_refresh_job is None:
+            self._drag_refresh_job = self.after(16, self._flush_drag_refresh)
+
+    def _flush_drag_refresh(self) -> None:
+        self._drag_refresh_job = None
+        self._draw()
+        self._update_info()
+
+    def _cancel_drag_refresh(self) -> None:
+        if self._drag_refresh_job is not None:
+            self.after_cancel(self._drag_refresh_job)
+            self._drag_refresh_job = None
+
     def _motion(self, event: tk.Event) -> None:
         if not self.dragging or self.selection_start is None:
             return
@@ -307,8 +390,7 @@ class TimelineEditor(ttk.LabelFrame):
             self.selection_start = value
         else:
             self.selection_end = value
-        self._draw()
-        self._update_info()
+        self._schedule_drag_refresh()
 
     def _release(self, event: tk.Event) -> None:
         if self.dragging and self.selection_start is not None:
@@ -319,6 +401,7 @@ class TimelineEditor(ttk.LabelFrame):
                 self.selection_end = value
         self.dragging = False
         self.resize_edge = None
+        self._cancel_drag_refresh()
         self._draw()
         self._update_info()
 

@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import io
 import os
+import queue
 import threading
 import time
 import tkinter as tk
@@ -15,16 +16,37 @@ from PIL import Image, ImageTk
 
 from adb_manager import ADBError, ADBManager, DeviceInfo, discover_adb_paths
 from builtin_assets import DEFAULT_RESULT_ROI, DEFAULT_RESULT_TEMPLATE, ensure_builtin_assets
+from challenge_solver import (
+    CardChallengeSolver,
+    ChallengeSolveError,
+    ChallengeTiming,
+    FIVE_CARD_MIN_MARGIN,
+    FIVE_CARD_MIN_SCORE,
+    SIX_CARD_MIN_MARGIN,
+    analyze_card_grid,
+)
 from config_manager import ConfigManager
-from event_model import EventValidationError, normalize_event, normalize_pattern, normalize_safe_zones, remove_safe_zone
+from event_model import (
+    EDITOR_VALIDATION_ERROR,
+    EventValidationError,
+    apply_safe_random_options,
+    editable_pattern_errors,
+    normalize_event,
+    normalize_pattern,
+    normalize_pattern_for_editing,
+    normalize_post_game,
+    normalize_safe_zones,
+    remove_safe_zone,
+    split_final_tap_for_adaptive,
+)
 from input_keys import recorder_key_name
 from pattern_store import PatternStore, PatternStoreError, safe_pattern_filename
 from pause_profiles import DEFAULT_PAUSE_PROFILE, PAUSE_TEMPLATE_SIZE, PauseProfileError, PauseProfileStore
 from player import Player
-from recorder import Recorder, RecorderError
+from recorder import Recorder, RecorderError, prepare_recording_candidate
 from state import AppState, StateMachine
 from sync_detector import ROI, ResultDetector, SyncDetector, SyncError, SyncResult, crop_roi, decode_png, is_real_fast_roi_source, stable_sync_target, summarize_sync_samples, wait_for_sync_with_retries
-from ui.event_dialog import EventDialog, SafeZoneDialog
+from ui.event_dialog import BulkSafeRandomDialog, EventDialog, SafeZoneDialog
 from ui.live_view import LiveView
 from ui.roi_selector import ROISelector
 from ui.recording_save_dialog import RecordingSaveDialog
@@ -75,6 +97,8 @@ class MainWindow:
         self.result_roi_photo = None
         self.pending_recording: tuple[dict, list[str], dict] | None = None
         self.record_save_dialog_open = False
+        self.challenge_test_stop: threading.Event | None = None
+        self.challenge_test_button = None
 
         self.root.title("MuMu Pattern Studio")
         window = self.config.data.get("window", {})
@@ -122,6 +146,11 @@ class MainWindow:
         self.loop_forever_var = tk.BooleanVar(value=False)
         self.loop_interval_var = tk.StringVar(value="1000")
         self.pre_sync_extra_var = tk.StringVar(value="0")
+        self.pre_sync_delay_mode_var = tk.StringVar(value="fixed")
+        self.pre_sync_random_min_var = tk.StringVar(value="300")
+        self.pre_sync_random_max_var = tk.StringVar(value="500")
+        self.pre_sync_random_delta_var = tk.StringVar(value="50")
+        self.pre_sync_random_history_var = tk.StringVar(value="3")
         self.sync_each_loop_var = tk.BooleanVar(value=True)
         self.sync_vars = {
             "mode": tk.StringVar(value="manual_f9"),
@@ -139,6 +168,13 @@ class MainWindow:
             "min_gameplay_seconds": tk.StringVar(value="15"),
             "timeout_seconds": tk.StringVar(value="45"),
             "pause_absent_threshold": tk.StringVar(value="0.80"),
+            "challenge_enabled": tk.BooleanVar(value=True),
+            "challenge_first_click_delay_ms": tk.StringVar(value="1000"),
+            "challenge_inter_card_min_ms": tk.StringVar(value="500"),
+            "challenge_inter_card_max_ms": tk.StringVar(value="900"),
+            "challenge_next_round_min_ms": tk.StringVar(value="1800"),
+            "challenge_next_round_max_ms": tk.StringVar(value="2200"),
+            "challenge_transition_timeout_ms": tk.StringVar(value="6500"),
         }
         self.control_vars = {
             "jump_x": tk.StringVar(value="160"),
@@ -359,37 +395,52 @@ class MainWindow:
             else:
                 widget = ttk.Entry(sync_box, textvariable=self.sync_vars[key])
             widget.grid(row=row, column=1, sticky="ew", pady=4)
-        ttk.Label(sync_box, text="เพิ่มเวลาก่อน Auto Sync เท่านั้น (ms)").grid(row=8, column=0, sticky="w", pady=4)
-        ttk.Entry(sync_box, textvariable=self.pre_sync_extra_var).grid(row=8, column=1, sticky="ew", pady=4)
+        ttk.Label(sync_box, text="เวลาก่อน Auto Sync").grid(row=8, column=0, sticky="w", pady=4)
+        ttk.Combobox(
+            sync_box, textvariable=self.pre_sync_delay_mode_var,
+            values=("fixed", "random"), state="readonly",
+        ).grid(row=8, column=1, sticky="ew", pady=4)
+        ttk.Label(sync_box, text="Fixed (ms)").grid(row=9, column=0, sticky="w", pady=4)
+        ttk.Entry(sync_box, textvariable=self.pre_sync_extra_var).grid(row=9, column=1, sticky="ew", pady=4)
+        random_delay_row = ttk.Frame(sync_box)
+        random_delay_row.grid(row=10, column=0, columnspan=2, sticky="ew", pady=4)
+        for column, (label, variable, width) in enumerate((
+            ("Min", self.pre_sync_random_min_var, 7),
+            ("Max", self.pre_sync_random_max_var, 7),
+            ("ห่างอย่างน้อย", self.pre_sync_random_delta_var, 7),
+            ("จำย้อนหลัง", self.pre_sync_random_history_var, 4),
+        )):
+            ttk.Label(random_delay_row, text=label).grid(row=0, column=column * 2, sticky="w", padx=(0 if column == 0 else 8, 3))
+            ttk.Entry(random_delay_row, textvariable=variable, width=width).grid(row=0, column=column * 2 + 1, sticky="w")
         ttk.Label(
             sync_box,
-            text="เพิ่มเวลาหลัง Event ก่อน Sync ตัวสุดท้าย โดยไม่ขยับ Event หลัง Sync/หลังจบเกม",
+            text="Random จะกันค่าที่ใกล้รอบก่อน เช่น 300 แล้ว 310 เมื่อกำหนดระยะห่าง 50 ms",
             style="Hint.TLabel", wraplength=520,
-        ).grid(row=9, column=0, columnspan=2, sticky="w", pady=(0, 4))
-        ttk.Button(sync_box, text="สร้าง/อัปเดต Pause ของ Stage", command=self._capture_template).grid(row=10, column=0, sticky="ew", pady=(10, 4))
-        ttk.Button(sync_box, text="ทดสอบจริง 8 เฟรม (เปิด MuMu อัตโนมัติ)", command=self._test_sync).grid(row=10, column=1, sticky="ew", padx=(6, 0), pady=(10, 4))
+        ).grid(row=11, column=0, columnspan=2, sticky="w", pady=(0, 4))
+        ttk.Button(sync_box, text="สร้าง/อัปเดต Pause ของ Stage", command=self._capture_template).grid(row=12, column=0, sticky="ew", pady=(10, 4))
+        ttk.Button(sync_box, text="ทดสอบจริง 8 เฟรม (เปิด MuMu อัตโนมัติ)", command=self._test_sync).grid(row=12, column=1, sticky="ew", padx=(6, 0), pady=(10, 4))
         ttk.Button(sync_box, text="เร็วสุด • Delay 0 ms", command=self._apply_accurate_sync_preset).grid(
-            row=11, column=0, sticky="ew", pady=4
+            row=13, column=0, sticky="ew", pady=4
         )
         ttk.Button(sync_box, text="คงที่ • Delay 300 ms (แนะนำ)", command=self._apply_stable_sync_preset).grid(
-            row=11, column=1, sticky="ew", padx=(6, 0), pady=4
+            row=13, column=1, sticky="ew", padx=(6, 0), pady=4
         )
         ttk.Label(
             sync_box,
             text="จุดเริ่ม Pattern = Pause เฟรมแรก + Delay; หากยังไม่พบ ระบบเริ่มรอบตรวจใหม่เอง ไม่ค้างรอ F9",
             style="Hint.TLabel", wraplength=520,
-        ).grid(row=12, column=0, columnspan=2, sticky="w", pady=(0, 4))
-        ttk.Label(sync_box, text="Similarity รวม/รูปทรง:").grid(row=13, column=0, sticky="w", pady=4)
-        ttk.Label(sync_box, textvariable=self.similarity_var, font=("Segoe UI", 11, "bold")).grid(row=13, column=1, sticky="w")
-        ttk.Label(sync_box, text="Pause ROI preview:").grid(row=14, column=0, sticky="nw", pady=(8, 0))
+        ).grid(row=14, column=0, columnspan=2, sticky="w", pady=(0, 4))
+        ttk.Label(sync_box, text="Similarity รวม/รูปทรง:").grid(row=15, column=0, sticky="w", pady=4)
+        ttk.Label(sync_box, textvariable=self.similarity_var, font=("Segoe UI", 11, "bold")).grid(row=15, column=1, sticky="w")
+        ttk.Label(sync_box, text="Pause ROI preview:").grid(row=16, column=0, sticky="nw", pady=(8, 0))
         self.roi_preview = ttk.Label(sync_box, text="ยังไม่มี template", anchor="center", relief="sunken", padding=5)
-        self.roi_preview.grid(row=14, column=1, sticky="w", pady=(8, 0))
+        self.roi_preview.grid(row=16, column=1, sticky="w", pady=(8, 0))
         ttk.Label(
             sync_box,
             text="Auto Sync ทนพลาด: Fast ROI แข่งกับ ADB Raw เฉพาะช่วงรอ Pause; เส้นทางที่พบก่อนจะเริ่ม Pattern",
             style="Hint.TLabel",
             wraplength=520,
-        ).grid(row=15, column=0, columnspan=2, sticky="w", pady=(8, 0))
+        ).grid(row=17, column=0, columnspan=2, sticky="w", pady=(8, 0))
         sync_box.columnconfigure(1, weight=1)
         self._refresh_pause_profiles()
 
@@ -450,17 +501,39 @@ class MainWindow:
             column = (index % 3) * 2
             ttk.Label(result_box, text=label).grid(row=row, column=column, sticky="w", padx=(0, 4), pady=3)
             ttk.Entry(result_box, textvariable=self.post_game_vars[key], width=9).grid(row=row, column=column + 1, sticky="ew", padx=(0, 12), pady=3)
-        ttk.Button(result_box, text="ใช้ XP มาตรฐานจากภาพนี้", command=self._use_default_result_template).grid(row=3, column=0, columnspan=2, sticky="ew", pady=(8, 3))
-        ttk.Button(result_box, text="Capture กรอบ XP เอง", command=self._capture_result_template).grid(row=3, column=2, columnspan=2, sticky="ew", padx=6, pady=(8, 3))
-        ttk.Button(result_box, text="ทดสอบหน้า Result ตอนนี้", command=self._test_result_detection).grid(row=3, column=4, columnspan=2, sticky="ew", pady=(8, 3))
+        ttk.Checkbutton(
+            result_box, text="แก้ Surprise Card อัตโนมัติ (5 ใบ/1 คำตอบ หรือ 6 ใบ/2 คำตอบ)",
+            variable=self.post_game_vars["challenge_enabled"],
+        ).grid(row=3, column=0, columnspan=6, sticky="w", pady=(7, 3))
+        challenge_delay_row = ttk.Frame(result_box)
+        challenge_delay_row.grid(row=4, column=0, columnspan=6, sticky="ew", pady=3)
+        for column, (label, key) in enumerate((
+            ("ก่อนใบแรก", "challenge_first_click_delay_ms"),
+            ("ระหว่างใบ Min", "challenge_inter_card_min_ms"),
+            ("Max", "challenge_inter_card_max_ms"),
+            ("รอบถัดไป Min", "challenge_next_round_min_ms"),
+            ("Max", "challenge_next_round_max_ms"),
+        )):
+            ttk.Label(challenge_delay_row, text=label).grid(row=0, column=column * 2, sticky="w", padx=(0 if column == 0 else 8, 3))
+            ttk.Entry(challenge_delay_row, textvariable=self.post_game_vars[key], width=7).grid(row=0, column=column * 2 + 1, sticky="w")
+        self.challenge_test_button = ttk.Button(
+            result_box,
+            text="▶ ทดสอบ/เล่น Surprise Card ตอนนี้ (ไม่รัน Pattern)",
+            style="Primary.TButton",
+            command=self._test_challenge_now,
+        )
+        self.challenge_test_button.grid(row=5, column=0, columnspan=6, sticky="ew", pady=(8, 3))
+        ttk.Button(result_box, text="ใช้ XP มาตรฐานจากภาพนี้", command=self._use_default_result_template).grid(row=6, column=0, columnspan=2, sticky="ew", pady=3)
+        ttk.Button(result_box, text="Capture กรอบ XP เอง", command=self._capture_result_template).grid(row=6, column=2, columnspan=2, sticky="ew", padx=6, pady=3)
+        ttk.Button(result_box, text="ทดสอบหน้า Result ตอนนี้", command=self._test_result_detection).grid(row=6, column=4, columnspan=2, sticky="ew", pady=3)
         self.result_roi_preview = ttk.Label(result_box, text="XP template", anchor="center", relief="sunken", padding=5)
-        self.result_roi_preview.grid(row=4, column=0, columnspan=2, sticky="w", pady=(6, 0))
-        ttk.Label(result_box, textvariable=self.result_similarity_var, font=("Segoe UI", 10, "bold")).grid(row=4, column=2, columnspan=4, sticky="w", padx=8)
+        self.result_roi_preview.grid(row=7, column=0, columnspan=2, sticky="w", pady=(6, 0))
+        ttk.Label(result_box, textvariable=self.result_similarity_var, font=("Segoe UI", 10, "bold")).grid(row=7, column=2, columnspan=4, sticky="w", padx=8)
         ttk.Label(
             result_box,
             text="Logic: XP ต้องตรงหลายเฟรม + ปุ่ม Pause ต้องหาย • พบแล้ว timeline เกมถูกตัดทันที และเล่นเฉพาะ Tap/Hold phase หลังจบเกม",
             style="Hint.TLabel", wraplength=850,
-        ).grid(row=5, column=0, columnspan=6, sticky="w", pady=(6, 0))
+        ).grid(row=8, column=0, columnspan=6, sticky="w", pady=(6, 0))
         for column in (1, 3, 5):
             result_box.columnconfigure(column, weight=1)
 
@@ -494,6 +567,7 @@ class MainWindow:
             on_create=self._timeline_create_zone,
             on_update=self._timeline_update_zone,
             on_select=self._timeline_zone_selected,
+            on_event_select=self._timeline_event_selected,
             on_delete=self._delete_zone,
         )
         self.timeline_editor.pack(fill="x", pady=(0, 8))
@@ -507,23 +581,43 @@ class MainWindow:
         event_buttons.pack(fill="x", pady=(0, 6))
         ttk.Button(event_buttons, text="เพิ่ม Event", command=self._add_event).pack(side="left")
         ttk.Button(event_buttons, text="แก้ไข Event ที่เลือก", command=self._edit_event).pack(side="left", padx=5)
+        ttk.Button(event_buttons, text="ปรับ Chance หลาย Event", command=self._bulk_edit_safe_random).pack(side="left")
         ttk.Button(event_buttons, text="ทำสำเนา", command=self._duplicate_event).pack(side="left")
-        ttk.Button(event_buttons, text="ลบ", command=self._delete_event).pack(side="left", padx=5)
-        ttk.Label(event_buttons, text="เลือกหรือดับเบิลคลิก Event เพื่อแก้ไข", style="Hint.TLabel").pack(side="right")
+        ttk.Button(event_buttons, text="ลบที่เลือก", style="Danger.TButton", command=self._delete_event).pack(side="left", padx=5)
+        selection_tools = ttk.Frame(event_box)
+        selection_tools.pack(fill="x", pady=(0, 6))
+        ttk.Button(selection_tools, text="เลือก Post-game ทั้งหมด", command=self._select_all_post_game).pack(side="left")
+        ttk.Button(selection_tools, text="ล้างการเลือก", command=self._clear_event_selection).pack(side="left", padx=5)
+        selection_hint = ttk.Label(
+            event_box,
+            text="Ctrl/Shift = เลือกหลายรายการ • Delete = ลบ • ระบบถามก่อนบันทึก",
+            style="Hint.TLabel",
+            anchor="w",
+        )
+        selection_hint.pack(fill="x", pady=(0, 6))
+        selection_hint.bind("<Configure>", lambda event: selection_hint.configure(wraplength=max(260, event.width - 10)))
         columns = ("phase", "time", "class", "type", "action", "chance", "jitter", "duration", "zone", "validation")
-        self.event_tree = ttk.Treeview(event_box, columns=columns, show="headings", height=10)
+        event_tree_frame = ttk.Frame(event_box)
+        event_tree_frame.pack(fill="both", expand=True)
+        self.event_tree = ttk.Treeview(event_tree_frame, columns=columns, show="headings", height=10, selectmode="extended")
         headings = ("Phase", "Time", "Class", "Type", "Action/Options", "Chance", "Jitter", "Duration", "Safe Zone", "Validation")
-        widths = (85, 70, 90, 95, 170, 60, 60, 70, 90, 80)
+        widths = (85, 70, 130, 95, 170, 60, 60, 70, 110, 320)
         for column, heading, width in zip(columns, headings, widths):
             self.event_tree.heading(column, text=heading)
             self.event_tree.column(column, width=width, anchor="center", stretch=column == "action")
-        self.event_tree.pack(fill="both", expand=True)
+        self.event_tree.pack(side="left", fill="both", expand=True)
+        event_yscroll = ttk.Scrollbar(event_tree_frame, orient="vertical", command=self.event_tree.yview)
+        event_yscroll.pack(side="right", fill="y")
+        self.event_tree.configure(yscrollcommand=event_yscroll.set)
         self.event_tree.bind("<Double-1>", lambda _event: self._edit_event())
+        self.event_tree.bind("<<TreeviewSelect>>", self._event_tree_selected)
+        self.event_tree.bind("<Delete>", lambda _event: self._delete_event())
         event_xscroll = ttk.Scrollbar(event_box, orient="horizontal", command=self.event_tree.xview)
         self.event_tree.configure(xscrollcommand=event_xscroll.set)
         event_xscroll.pack(fill="x")
         self.event_tree.tag_configure("required", foreground="#8a2c0d")
         self.event_tree.tag_configure("safe", foreground="#12633b")
+        self.event_tree.tag_configure("invalid", foreground="#991b1b", background="#fee2e2")
 
         zone_columns = ("id", "start", "end", "label", "count")
         self.zone_tree = ttk.Treeview(zone_box, columns=zone_columns, show="headings", height=5)
@@ -883,6 +977,12 @@ class MainWindow:
 
     def _player_progress(self, snapshot: dict) -> None:
         self.playback_snapshot = dict(snapshot)
+        if "pre_sync_delay_ms" in snapshot:
+            mode = "Random" if self.pre_sync_delay_mode_var.get() == "random" else "Fixed"
+            self.message_var.set(
+                f"รอบ {snapshot.get('round_number', 1)} • เวลาก่อน Sync แบบ {mode} = "
+                f"{int(snapshot['pre_sync_delay_ms'])} ms"
+            )
         if hasattr(self, "timeline_editor"):
             self.timeline_editor.update_playback(
                 str(snapshot.get("phase", "")), float(snapshot.get("elapsed", 0.0)),
@@ -896,10 +996,11 @@ class MainWindow:
         phase = str(snapshot.get("phase", ""))
         elapsed = float(snapshot.get("elapsed", 0.0))
         duration = float(snapshot.get("duration", 0.0))
-        if phase in {"waiting_sync", "waiting_result"} and self.player:
+        if phase in {"waiting_pre_sync_condition", "waiting_sync", "waiting_result"} and self.player:
             elapsed += max(0.0, time.perf_counter() - float(snapshot.get("reported_at", time.perf_counter())))
         phase_names = {
             "pre_sync": "ก่อน Sync",
+            "waiting_pre_sync_condition": "รอสุ่มทักษะเสร็จ",
             "waiting_sync": "รอ Auto Sync / F9",
             "synced": "หลัง Sync",
             "waiting_result": "รอหน้า Result / XP",
@@ -915,6 +1016,10 @@ class MainWindow:
             timer_text = f"▶ WAIT SYNC  {self._format_elapsed(elapsed)}"
             percent = 0.0
             remaining_text = "รอพบ Pause หรือกด F9"
+        elif phase == "waiting_pre_sync_condition":
+            timer_text = f"▶ WAIT RANDOM  {self._format_elapsed(elapsed)}"
+            percent = 0.0
+            remaining_text = "รอปุ่ม Stop หาย • F8 หยุด"
         elif phase == "waiting_result":
             timer_text = f"▶ WAIT RESULT  {self._format_elapsed(elapsed)}"
             percent = min(100.0, elapsed / duration * 100) if duration > 0 else 0.0
@@ -990,9 +1095,22 @@ class MainWindow:
                 "min_gameplay_seconds": 15,
                 "timeout_seconds": 45,
                 "pause_absent_threshold": 0.80,
+                "challenge_enabled": True,
+                "challenge_first_click_delay_ms": 1000,
+                "challenge_inter_card_min_ms": 500,
+                "challenge_inter_card_max_ms": 900,
+                "challenge_next_round_min_ms": 1800,
+                "challenge_next_round_max_ms": 2200,
+                "challenge_transition_timeout_ms": 6500,
             },
             "recording": {"rapid_tap_to_hold": True, "rapid_tap_gap_ms": 180},
-            "playback": {"repeat_count": 1, "loop_forever": False, "loop_interval_ms": 1000, "pre_sync_extra_ms": 0, "sync_each_loop": True},
+            "playback": {
+                "repeat_count": 1, "loop_forever": False, "loop_interval_ms": 1000,
+                "pre_sync_extra_ms": 0, "pre_sync_delay_mode": "fixed",
+                "pre_sync_random_min_ms": 300, "pre_sync_random_max_ms": 500,
+                "pre_sync_random_min_delta_ms": 50, "pre_sync_random_history": 3,
+                "sync_each_loop": True,
+            },
             "stats": {"play_count": 0, "last_played_at": ""},
             "events": [],
             "safe_zones": [],
@@ -1043,12 +1161,30 @@ class MainWindow:
         if not name:
             return
         try:
-            self.current_pattern, warnings = self.store.load(name)
+            self.current_pattern, warnings = self.store.load_for_editing(name)
         except (PatternStoreError, EventValidationError) as exc:
             self._show_error(str(exc))
             return
         self._load_pattern_to_ui()
-        self.message_var.set("เปิด Pattern แล้ว" + (f" • {'; '.join(warnings)}" if warnings else ""))
+        errors = editable_pattern_errors(self.current_pattern)
+        if errors:
+            self.state.transition(AppState.IDLE, force=True)
+            self.error_var.set(f"ต้องแก้ {len(errors)} Event")
+            first_invalid = next(
+                (event["id"] for event in self.current_pattern["events"] if event.get(EDITOR_VALIDATION_ERROR)),
+                None,
+            )
+            if first_invalid and self.event_tree.exists(first_invalid):
+                self.event_tree.selection_set(first_invalid)
+                self.event_tree.see(first_invalid)
+            self.notebook.select(self.events_page)
+            self.message_var.set(
+                f"เปิด Pattern ในโหมดซ่อมแล้ว • พบ {len(errors)} Event ต้องแก้ • "
+                "เลือกแถวสีแดงแล้วกด ‘แก้ไข Event ที่เลือก’ หรือขยาย Safe Zone"
+            )
+        else:
+            self.error_var.set("—")
+            self.message_var.set("เปิด Pattern แล้ว" + (f" • {'; '.join(warnings)}" if warnings else ""))
         self.config.data["last_pattern"] = name
         self._save_config()
 
@@ -1088,6 +1224,11 @@ class MainWindow:
         self.loop_forever_var.set(bool(playback.get("loop_forever", False)))
         self.loop_interval_var.set(str(playback.get("loop_interval_ms", 1000)))
         self.pre_sync_extra_var.set(str(playback.get("pre_sync_extra_ms", 0)))
+        self.pre_sync_delay_mode_var.set(str(playback.get("pre_sync_delay_mode", "fixed")))
+        self.pre_sync_random_min_var.set(str(playback.get("pre_sync_random_min_ms", 300)))
+        self.pre_sync_random_max_var.set(str(playback.get("pre_sync_random_max_ms", 500)))
+        self.pre_sync_random_delta_var.set(str(playback.get("pre_sync_random_min_delta_ms", 50)))
+        self.pre_sync_random_history_var.set(str(playback.get("pre_sync_random_history", 3)))
         self.sync_each_loop_var.set(bool(playback.get("sync_each_loop", True)))
         self._refresh_tables()
         self._update_roi_preview()
@@ -1103,7 +1244,7 @@ class MainWindow:
             f"{'Result XP พร้อม' if post_ready else 'ยังไม่มี XP template'}"
         )
 
-    def _collect_ui(self) -> dict:
+    def _collect_ui(self, *, allow_invalid: bool = False) -> dict:
         if not self.current_pattern:
             raise PatternStoreError("ยังไม่ได้เลือก Pattern")
         pattern = deepcopy(self.current_pattern)
@@ -1126,6 +1267,13 @@ class MainWindow:
             "min_gameplay_seconds": int(self.post_game_vars["min_gameplay_seconds"].get()),
             "timeout_seconds": int(self.post_game_vars["timeout_seconds"].get()),
             "pause_absent_threshold": float(self.post_game_vars["pause_absent_threshold"].get()),
+            "challenge_enabled": bool(self.post_game_vars["challenge_enabled"].get()),
+            "challenge_first_click_delay_ms": int(self.post_game_vars["challenge_first_click_delay_ms"].get()),
+            "challenge_inter_card_min_ms": int(self.post_game_vars["challenge_inter_card_min_ms"].get()),
+            "challenge_inter_card_max_ms": int(self.post_game_vars["challenge_inter_card_max_ms"].get()),
+            "challenge_next_round_min_ms": int(self.post_game_vars["challenge_next_round_min_ms"].get()),
+            "challenge_next_round_max_ms": int(self.post_game_vars["challenge_next_round_max_ms"].get()),
+            "challenge_transition_timeout_ms": int(self.post_game_vars["challenge_transition_timeout_ms"].get()),
         })
         for action in ("jump", "slide"):
             pattern["controls"][action] = {
@@ -1141,22 +1289,36 @@ class MainWindow:
             "loop_forever": bool(self.loop_forever_var.get()),
             "loop_interval_ms": int(self.loop_interval_var.get()),
             "pre_sync_extra_ms": int(self.pre_sync_extra_var.get()),
+            "pre_sync_delay_mode": self.pre_sync_delay_mode_var.get(),
+            "pre_sync_random_min_ms": int(self.pre_sync_random_min_var.get()),
+            "pre_sync_random_max_ms": int(self.pre_sync_random_max_var.get()),
+            "pre_sync_random_min_delta_ms": int(self.pre_sync_random_delta_var.get()),
+            "pre_sync_random_history": int(self.pre_sync_random_history_var.get()),
             "sync_each_loop": bool(self.sync_each_loop_var.get()),
         }
         pattern["device"]["preferred_serial"] = self.device_var.get().strip()
+        if allow_invalid and editable_pattern_errors(pattern):
+            return normalize_pattern_for_editing(pattern)[0]
         return normalize_pattern(pattern)[0]
 
     def _save_current(self, quiet: bool = False) -> bool:
         try:
-            self.current_pattern = self._collect_ui()
-            path, warnings = self.store.save(self.current_pattern)
+            self.current_pattern = self._collect_ui(allow_invalid=True)
+            errors = editable_pattern_errors(self.current_pattern)
+            if errors:
+                path, warnings = self.store.save_for_editing(self.current_pattern)
+            else:
+                path, warnings = self.store.save(self.current_pattern)
         except (ValueError, PatternStoreError, EventValidationError) as exc:
             self._show_error(str(exc))
             return False
         self.pattern_var.set(self.current_pattern["name"])
         self._refresh_pattern_names()
         if not quiet:
-            self.message_var.set(f"บันทึก {path.name} แล้ว" + (f" • {'; '.join(warnings)}" if warnings else ""))
+            if errors:
+                self.message_var.set(f"บันทึกความคืบหน้า {path.name} แล้ว • ยังเหลือ {len(errors)} Event ต้องแก้ก่อนเล่น")
+            else:
+                self.message_var.set(f"บันทึก {path.name} แล้ว" + (f" • {'; '.join(warnings)}" if warnings else ""))
         return True
 
     def _refresh_pattern_names(self) -> None:
@@ -1173,7 +1335,7 @@ class MainWindow:
             messagebox.showinfo("เลือก Pattern", "กรุณาเลือก Pattern ที่ต้องการแก้ Safe Zone", parent=self.root)
             return
         self._load_selected_pattern()
-        if self.current_pattern:
+        if self.current_pattern and not editable_pattern_errors(self.current_pattern):
             self.message_var.set(f"โหลด {self.current_pattern['name']} สำหรับแก้ Safe Zone แล้ว")
 
     def _refresh_library(self) -> None:
@@ -1181,7 +1343,7 @@ class MainWindow:
             self.library_tree.delete(item)
         for name in self.store.list_patterns():
             try:
-                pattern, _ = self.store.load(name)
+                pattern, _ = self.store.load_for_editing(name)
                 stats = pattern.get("stats", {})
                 duration = max(
                     (float(event.get("at", 0)) + int(event.get("duration_ms", 0)) / 1000 for event in pattern.get("events", [])),
@@ -1189,7 +1351,11 @@ class MainWindow:
                 )
                 self.library_tree.insert(
                     "", "end", iid=name,
-                    values=(name, len(pattern.get("events", [])), self._format_elapsed(duration), stats.get("play_count", 0), stats.get("last_played_at", "—") or "—"),
+                    values=(
+                        name, len(pattern.get("events", [])), self._format_elapsed(duration),
+                        stats.get("play_count", 0),
+                        f"ต้องแก้ {len(editable_pattern_errors(pattern))} Event" if editable_pattern_errors(pattern) else (stats.get("last_played_at", "—") or "—"),
+                    ),
                 )
             except PatternStoreError:
                 self.library_tree.insert("", "end", iid=name, values=(name, "ERROR", "—", "—", "ไฟล์เสียหาย"))
@@ -1206,7 +1372,7 @@ class MainWindow:
             return
         self.pattern_var.set(name)
         self._load_selected_pattern()
-        self.notebook.select(self.quick_page)
+        self.notebook.select(self.events_page if editable_pattern_errors(self.current_pattern) else self.quick_page)
 
     def _library_rename(self) -> None:
         name = self._selected_library_name()
@@ -1320,23 +1486,50 @@ class MainWindow:
             return
         for event in self.current_pattern["events"]:
             action = event.get("action") or ", ".join(f"{key}:{value}" for key, value in event.get("options", {}).items())
-            if event.get("action") in {"tap", "hold"}:
+            if event.get("type") == "adaptive_wait":
+                action = (
+                    f"เริ่มเฝ้า Stop@({event.get('detect_x','?')},{event.get('detect_y','?')}) "
+                    "→ ยิง Tap Play ตัวสุดท้าย"
+                )
+            elif event.get("action") in {"tap", "hold"}:
                 action = f"{event['action']} ({event.get('x','?')},{event.get('y','?')})"
-            event_class = "REQUIRED" if event["event_class"] == "required" else "SAFE RANDOM"
+            if event.get("event_class", "required") == "required":
+                event_class = "REQUIRED"
+            else:
+                event_class = "SAFE RANDOM (AUTO)" if event.get("safe_zone_auto") else "SAFE RANDOM"
             phase_label = {
                 "pre_sync": "ก่อน Sync", "synced": "หลัง Sync", "post_game": "หลังจบเกม",
             }.get(event.get("phase", "synced"), str(event.get("phase", "synced")))
+            try:
+                time_text = f"{float(event.get('at', 0)):.3f}"
+            except (TypeError, ValueError):
+                time_text = str(event.get("at", "?"))
+            validation_error = str(event.get(EDITOR_VALIDATION_ERROR, "")).strip()
             self.event_tree.insert("", "end", iid=event["id"], values=(
                 phase_label,
-                f"{event['at']:.3f}", event_class, event["type"], action,
+                time_text, event_class, event.get("type", "?"), action,
                 event.get("chance", "—"), event.get("jitter_ms", 0), event.get("duration_ms", "—"),
-                event.get("safe_zone_id", "—"), "ถูกต้อง",
-            ), tags=("required" if event["event_class"] == "required" else "safe",))
+                event.get("safe_zone_id", "—"), validation_error or "ถูกต้อง",
+            ), tags=("invalid" if validation_error else ("required" if event.get("event_class") == "required" else "safe"),))
         for zone in self.current_pattern["safe_zones"]:
             count = sum(1 for event in self.current_pattern["events"] if event.get("safe_zone_id") == zone["id"])
             self.zone_tree.insert("", "end", iid=zone["id"], values=(zone["id"], f"{zone['start']:.3f}", f"{zone['end']:.3f}", zone["label"], count))
         if hasattr(self, "timeline_editor"):
             self.timeline_editor.set_pattern(self.current_pattern)
+
+    def _apply_editor_candidate(self, candidate: dict, success_message: str) -> tuple[list[str], list[str]]:
+        self.current_pattern, warnings = normalize_pattern_for_editing(candidate)
+        errors = editable_pattern_errors(self.current_pattern)
+        self._refresh_tables()
+        if errors:
+            self.error_var.set(f"ต้องแก้ {len(errors)} Event")
+            self._save_current(quiet=True)
+            self.message_var.set(f"{success_message} • บันทึกความคืบหน้าแล้ว • ยังเหลือ {len(errors)} Event ต้องแก้ก่อนเล่น")
+        else:
+            self.error_var.set("—")
+            self._save_current(quiet=True)
+            self.message_var.set(success_message + (f" • {'; '.join(warnings)}" if warnings else ""))
+        return warnings, errors
 
     def _next_zone_id(self) -> str:
         existing = {str(zone.get("id", "")) for zone in (self.current_pattern or {}).get("safe_zones", [])}
@@ -1364,7 +1557,7 @@ class MainWindow:
             "label": f"เลือกจาก Timeline {start:.3f}–{end:.3f}s",
         })
         try:
-            self.current_pattern, warnings = normalize_pattern(candidate)
+            self.current_pattern, warnings = normalize_pattern_for_editing(candidate)
         except EventValidationError as exc:
             self._show_error(str(exc))
             return
@@ -1388,13 +1581,11 @@ class MainWindow:
         zone["start"], zone["end"] = start, end
         zone["label"] = str(zone.get("label") or f"แก้จาก Timeline {start:.3f}–{end:.3f}s")
         try:
-            self.current_pattern, warnings = normalize_pattern(candidate)
+            self.current_pattern, warnings = normalize_pattern_for_editing(candidate)
         except EventValidationError as exc:
             self._show_error(str(exc))
             return
-        self._refresh_tables()
-        self._save_current(quiet=True)
-        self.message_var.set(f"อัปเดต {zone_id} เป็น {start:.3f}–{end:.3f}s แล้ว" + (f" • {'; '.join(warnings)}" if warnings else ""))
+        self._apply_editor_candidate(self.current_pattern, f"อัปเดต {zone_id} เป็น {start:.3f}–{end:.3f}s แล้ว")
 
     def _selected_event(self) -> dict | None:
         selected = self.event_tree.selection()
@@ -1414,6 +1605,31 @@ class MainWindow:
             return
         EventDialog(self.root, event, self.current_pattern["safe_zones"], lambda updated: self._accept_event(updated, event["id"]))
 
+    def _bulk_edit_safe_random(self) -> None:
+        if not self.current_pattern:
+            return
+        safe_ids = {event["id"] for event in self.current_pattern["events"] if event.get("event_class") == "safe_random"}
+        selected_ids = [event_id for event_id in self.event_tree.selection() if event_id in safe_ids]
+        if not safe_ids:
+            messagebox.showinfo("ยังไม่มี Safe Random", "สร้าง Safe Zone ครอบ Event ก่อน", parent=self.root)
+            return
+        BulkSafeRandomDialog(
+            self.root, len(selected_ids),
+            lambda options, apply_all: self._apply_bulk_safe_random(options, None if apply_all else selected_ids),
+        )
+
+    def _apply_bulk_safe_random(self, options: dict, event_ids: list[str] | None) -> None:
+        if not self.current_pattern:
+            return
+        try:
+            self.current_pattern, warnings, changed = apply_safe_random_options(self.current_pattern, options, event_ids)
+        except EventValidationError as exc:
+            messagebox.showerror("ปรับ Chance ไม่สำเร็จ", str(exc), parent=self.root)
+            return
+        self._refresh_tables()
+        self._save_current(quiet=True)
+        self.message_var.set(f"ปรับ Chance ให้ Safe Random {changed} Event แล้ว" + (f" • {'; '.join(warnings)}" if warnings else ""))
+
     def _duplicate_event(self) -> None:
         event = self._selected_event()
         if not event or not self.current_pattern:
@@ -1427,7 +1643,9 @@ class MainWindow:
     def _accept_event(self, event: dict, old_id: str | None = None) -> None:
         if not self.current_pattern:
             return
-        events = [item for item in self.current_pattern["events"] if item["id"] != old_id]
+        events, event, adaptive_split = split_final_tap_for_adaptive(
+            self.current_pattern["events"], event, old_id,
+        )
         if not event.get("id"):
             event["id"] = self._next_event_id()
         required = [item for item in events if item["event_class"] == "required"]
@@ -1442,22 +1660,70 @@ class MainWindow:
                 raise EventValidationError(f"Event ID ซ้ำ: {normalized['id']}")
             candidate = deepcopy(self.current_pattern)
             candidate["events"] = events + [normalized]
-            self.current_pattern, all_warnings = normalize_pattern(candidate)
+            self.current_pattern, all_warnings = normalize_pattern_for_editing(candidate)
         except EventValidationError as exc:
             messagebox.showerror("Event ไม่ปลอดภัย", str(exc), parent=self.root)
             return
+        errors = editable_pattern_errors(self.current_pattern)
         self._refresh_tables()
-        self._save_current(quiet=True)
-        self.message_var.set("บันทึก Event แล้ว" + (f" • {'; '.join(warnings + all_warnings)}" if warnings or all_warnings else ""))
+        if errors:
+            self.error_var.set(f"ต้องแก้ {len(errors)} Event")
+            self._save_current(quiet=True)
+            self.message_var.set(f"แก้ Event {normalized['id']} และบันทึกความคืบหน้าแล้ว • ยังเหลือ {len(errors)} Event ต้องแก้ก่อนเล่น")
+        else:
+            self.error_var.set("—")
+            self._save_current(quiet=True)
+            split_message = " • แยก Tap Play ตัวสุดท้ายให้อัตโนมัติแล้ว" if adaptive_split else ""
+            self.message_var.set("บันทึก Event แล้ว" + split_message + (f" • {'; '.join(warnings + all_warnings)}" if warnings or all_warnings else ""))
 
     def _delete_event(self) -> None:
-        event = self._selected_event()
-        if not event or not self.current_pattern:
+        if not self.current_pattern:
             return
-        if messagebox.askyesno("ยืนยัน", f"ลบ Event {event['id']} หรือไม่?", parent=self.root):
-            self.current_pattern["events"] = [item for item in self.current_pattern["events"] if item["id"] != event["id"]]
-            self._refresh_tables()
-            self._save_current(quiet=True)
+        selected_ids = [str(event_id) for event_id in self.event_tree.selection()]
+        if not selected_ids:
+            messagebox.showinfo("เลือก Event", "กรุณาเลือก Event ที่ต้องการลบอย่างน้อย 1 รายการ", parent=self.root)
+            return
+        selected_set = set(selected_ids)
+        selected_events = [event for event in self.current_pattern["events"] if str(event.get("id")) in selected_set]
+        phase_counts: dict[str, int] = {}
+        for event in selected_events:
+            phase = str(event.get("phase", "synced"))
+            phase_counts[phase] = phase_counts.get(phase, 0) + 1
+        detail = " • ".join(f"{phase} {count}" for phase, count in phase_counts.items())
+        prompt = (
+            f"ลบ Event ที่เลือก {len(selected_events)} รายการหรือไม่?\n{detail}\n\n"
+            "การลบจะบันทึกลง Pattern ทันที แต่ไฟล์ .repair.bak เดิมยังไม่ถูกลบ"
+        )
+        if messagebox.askyesno("ยืนยันลบหลาย Event", prompt, parent=self.root):
+            candidate = deepcopy(self.current_pattern)
+            candidate["events"] = [item for item in candidate["events"] if str(item.get("id")) not in selected_set]
+            self._apply_editor_candidate(candidate, f"ลบ Event {len(selected_events)} รายการแล้ว ({detail})")
+
+    def _select_all_post_game(self) -> None:
+        if not self.current_pattern:
+            return
+        ids = [
+            str(event.get("id")) for event in self.current_pattern.get("events", [])
+            if event.get("phase") == "post_game" and self.event_tree.exists(str(event.get("id")))
+        ]
+        if not ids:
+            messagebox.showinfo("Post-game", "Pattern นี้ไม่มี Post-game Event", parent=self.root)
+            return
+        self.event_tree.selection_set(ids)
+        self.event_tree.focus(ids[0])
+        self.event_tree.see(ids[0])
+        self.timeline_editor.select_event(ids[0])
+        self.message_var.set(f"เลือก Post-game {len(ids)} Event แล้ว • Ctrl+คลิกเพื่อตัดบางรายการออก หรือกดลบที่เลือก")
+
+    def _clear_event_selection(self) -> None:
+        selected = self.event_tree.selection()
+        if selected:
+            self.event_tree.selection_remove(*selected)
+        self.timeline_editor.select_event(None)
+
+    def _event_tree_selected(self, _event=None) -> None:
+        selected = self.event_tree.selection()
+        self.timeline_editor.select_event(str(selected[0]) if selected else None)
 
     def _selected_zone(self) -> dict | None:
         selected = self.zone_tree.selection()
@@ -1475,6 +1741,25 @@ class MainWindow:
             self.zone_tree.see(zone_id)
         else:
             self.zone_tree.selection_remove(*self.zone_tree.selection())
+
+    def _timeline_event_selected(self, event_id: str) -> None:
+        if not self.event_tree.exists(event_id):
+            return
+        self.notebook.select(self.events_page)
+        self.event_tree.selection_set(event_id)
+        self.event_tree.focus(event_id)
+        self.event_tree.see(event_id)
+        self.timeline_editor.select_event(event_id)
+        self.root.after_idle(self._scroll_events_page_to_table)
+
+    def _scroll_events_page_to_table(self) -> None:
+        self.events_page.canvas.update_idletasks()
+        region = self.events_page.canvas.bbox("all")
+        if not region:
+            return
+        content_height = max(1, region[3] - region[1])
+        table_y = max(0, self.event_tree.winfo_rooty() - self.events_page.content.winfo_rooty() - 30)
+        self.events_page.canvas.yview_moveto(min(1.0, table_y / content_height))
 
     def _zone_tree_selected(self, _event=None) -> None:
         selected = self.zone_tree.selection()
@@ -1518,13 +1803,20 @@ class MainWindow:
             normalized_zones, warnings = normalize_safe_zones(zones + [zone])
             candidate = deepcopy(self.current_pattern)
             candidate["safe_zones"] = normalized_zones
-            self.current_pattern, pattern_warnings = normalize_pattern(candidate)
+            self.current_pattern, pattern_warnings = normalize_pattern_for_editing(candidate)
         except EventValidationError as exc:
             messagebox.showerror("Safe Zone ใช้ไม่ได้", str(exc), parent=self.root)
             return
+        errors = editable_pattern_errors(self.current_pattern)
         self._refresh_tables()
-        self._save_current(quiet=True)
-        self.message_var.set("บันทึก Safe Zone แล้ว" + (f" • {'; '.join(warnings + pattern_warnings)}" if warnings or pattern_warnings else ""))
+        if errors:
+            self.error_var.set(f"ต้องแก้ {len(errors)} Event")
+            self._save_current(quiet=True)
+            self.message_var.set(f"ปรับ Safe Zoneและบันทึกความคืบหน้าแล้ว • ยังเหลือ {len(errors)} Event ต้องแก้ก่อนเล่น")
+        else:
+            self.error_var.set("—")
+            self._save_current(quiet=True)
+            self.message_var.set("บันทึก Safe Zone แล้ว" + (f" • {'; '.join(warnings + pattern_warnings)}" if warnings or pattern_warnings else ""))
 
     def _delete_zone(self, zone_id: str | None = None) -> None:
         zone = (
@@ -1860,7 +2152,171 @@ class MainWindow:
         value = f"XP {xp_score:.3f} • Pause {pause_text} • ต่อเนื่อง {consecutive}"
         self.root.after(0, lambda: self.result_similarity_var.set(value))
 
+    @staticmethod
+    def _challenge_timing(post_game: dict) -> ChallengeTiming:
+        return ChallengeTiming(
+            first_click_delay_ms=int(post_game.get("challenge_first_click_delay_ms", 1000)),
+            inter_card_min_ms=int(post_game.get("challenge_inter_card_min_ms", 500)),
+            inter_card_max_ms=int(post_game.get("challenge_inter_card_max_ms", 900)),
+            next_round_min_ms=int(post_game.get("challenge_next_round_min_ms", 1800)),
+            next_round_max_ms=int(post_game.get("challenge_next_round_max_ms", 2200)),
+            transition_timeout_ms=int(post_game.get("challenge_transition_timeout_ms", 6500)),
+        )
+
+    @staticmethod
+    def _challenge_detection_status(analysis, source: str) -> str:
+        if analysis.kind == "six_cards":
+            detail = f"cluster margin {analysis.confidence_margin:.2f}/{SIX_CARD_MIN_MARGIN:.2f}"
+        else:
+            detail = (
+                f"score {analysis.target_score_floor:.2f}/{FIVE_CARD_MIN_SCORE:.2f} • "
+                f"margin {analysis.confidence_margin:.2f}/{FIVE_CARD_MIN_MARGIN:.2f}"
+            )
+        verdict = "พร้อมยืนยัน 2 เฟรม" if analysis.confident else "ยังไม่ผ่านเกณฑ์"
+        return (
+            f"Surprise Card: พบ {analysis.kind} จาก {source} • {verdict} • "
+            f"{detail}"
+        )
+
+    def _challenge_test_running(self) -> bool:
+        # Keep other ADB-driven features locked until the worker has actually
+        # returned.  F8 setting the event is only a cancellation request.
+        return getattr(self, "challenge_test_stop", None) is not None
+
+    def _warn_challenge_test_running(self) -> None:
+        messagebox.showwarning(
+            "กำลังทดสอบ Surprise Card",
+            "กด F8 เพื่อหยุดการทดสอบ Surprise Card ก่อนเริ่มงานอื่น",
+            parent=self.root,
+        )
+
+    @staticmethod
+    def _solve_current_challenge(
+        adb: ADBManager,
+        serial: str,
+        timing: ChallengeTiming,
+        stop_event: threading.Event,
+        on_status: Callable[[str], None] | None = None,
+    ) -> tuple[int, str, str]:
+        screenshot, source = adb.capture_image(serial)
+        analysis = analyze_card_grid(screenshot)
+        if analysis is None:
+            raise ChallengeSolveError("ไม่พบหน้าจอ Surprise Card แบบ 5 หรือ 6 ใบในภาพปัจจุบัน")
+        if not analysis.confident:
+            detail = (
+                f"cluster margin {analysis.confidence_margin:.2f}/{SIX_CARD_MIN_MARGIN:.2f}"
+                if analysis.kind == "six_cards"
+                else f"score {analysis.target_score_floor:.2f}, margin {analysis.confidence_margin:.2f}"
+            )
+            raise ChallengeSolveError(
+                f"พบ Surprise Card แต่ยังแยกคำตอบไม่มั่นใจ ({detail}) จึงไม่คลิก"
+            )
+        solver = CardChallengeSolver(
+            lambda: adb.capture_image(serial)[0],
+            lambda x, y: adb.shell(serial, f"input tap {x} {y}"),
+            stop_event,
+            timing=timing,
+            on_status=on_status,
+        )
+        rounds = solver.solve_three_rounds(analysis)
+        if not stop_event.is_set() and rounds != 3:
+            raise ChallengeSolveError(f"เกมการ์ดจบไม่ครบ 3 รอบ ({rounds}/3)")
+        return rounds, analysis.kind, source
+
+    def _test_challenge_now(self) -> None:
+        if self._challenge_test_running():
+            self._warn_challenge_test_running()
+            return
+        recorder_active = bool(self.recorder.status().get("active"))
+        passive_states = {AppState.IDLE, AppState.STOPPED, AppState.ERROR}
+        if self.player or recorder_active or self.state.state not in passive_states:
+            messagebox.showwarning(
+                "ระบบหลักกำลังทำงาน",
+                "หยุด Play/Record/Sync ก่อน แล้วจึงทดสอบ Surprise Card เพื่อไม่ให้ ADB สองระบบคลิกชนกัน",
+                parent=self.root,
+            )
+            return
+        try:
+            post_game, _warnings = normalize_post_game({
+                "challenge_first_click_delay_ms": self.post_game_vars["challenge_first_click_delay_ms"].get(),
+                "challenge_inter_card_min_ms": self.post_game_vars["challenge_inter_card_min_ms"].get(),
+                "challenge_inter_card_max_ms": self.post_game_vars["challenge_inter_card_max_ms"].get(),
+                "challenge_next_round_min_ms": self.post_game_vars["challenge_next_round_min_ms"].get(),
+                "challenge_next_round_max_ms": self.post_game_vars["challenge_next_round_max_ms"].get(),
+                "challenge_transition_timeout_ms": self.post_game_vars["challenge_transition_timeout_ms"].get(),
+            })
+            timing = self._challenge_timing(post_game)
+            adb, serial = self._adb(), self.device_var.get().strip()
+            if not serial:
+                raise ADBError("กรุณาเลือก MuMu device")
+        except Exception as exc:
+            self.error_var.set(str(exc))
+            self.message_var.set(f"ทดสอบ Surprise Card ไม่ได้: {exc}")
+            messagebox.showwarning("ทดสอบ Surprise Card", str(exc), parent=self.root)
+            return
+
+        stop_event = threading.Event()
+        self.challenge_test_stop = stop_event
+        if self.challenge_test_button is not None:
+            self.challenge_test_button.configure(state="disabled")
+        self.result_status_var.set("Surprise Card: กำลังตรวจภาพจริง 2 เฟรมก่อนคลิก • กด F8 เพื่อหยุด")
+        self.message_var.set("โหมดทดสอบ Surprise Card เท่านั้น • ไม่รัน Pattern/Sync/Post-game")
+
+        updates: queue.SimpleQueue[tuple[str, object, object | None]] = queue.SimpleQueue()
+
+        def report_status(message: str) -> None:
+            updates.put(("status", message, None))
+
+        def finish(result: tuple[int, str, str] | None, error: Exception | None) -> None:
+            if self.challenge_test_stop is not stop_event:
+                return
+            self.challenge_test_stop = None
+            if self.challenge_test_button is not None:
+                self.challenge_test_button.configure(state="normal")
+            if stop_event.is_set():
+                self.result_status_var.set("Surprise Card: หยุดการทดสอบแล้ว • ไม่มีการเริ่ม Pattern")
+                self.message_var.set("หยุดโหมดทดสอบ Surprise Card แล้ว")
+                return
+            if error is not None:
+                self.error_var.set(str(error))
+                self.result_status_var.set(f"Surprise Card: หยุดอย่างปลอดภัย • {error}")
+                self.message_var.set("ทดสอบ Surprise Card ไม่สำเร็จ • ไม่มีการรัน Pattern หรือ Post-game")
+                messagebox.showwarning("ทดสอบ Surprise Card", str(error), parent=self.root)
+                return
+            rounds, kind, source = result
+            self.result_status_var.set(f"Surprise Card: ผ่าน {rounds}/3 รอบ • {kind} • ภาพจาก {source}")
+            self.message_var.set("ทดสอบ Surprise Card เสร็จแล้ว • ไม่ได้รัน Pattern/Sync/Post-game")
+
+        def worker() -> None:
+            result = None
+            error = None
+            try:
+                result = self._solve_current_challenge(adb, serial, timing, stop_event, report_status)
+            except Exception as exc:
+                error = exc
+            updates.put(("done", result, error))
+
+        def poll_worker() -> None:
+            while True:
+                try:
+                    kind, value, error = updates.get_nowait()
+                except queue.Empty:
+                    break
+                if kind == "status":
+                    self.result_status_var.set(f"Surprise Card: {value}")
+                else:
+                    finish(value, error)
+                    return
+            if self.challenge_test_stop is stop_event:
+                self.root.after(50, poll_worker)
+
+        threading.Thread(target=worker, daemon=True, name="challenge-test").start()
+        self.root.after(50, poll_worker)
+
     def _test_result_detection(self) -> None:
+        if self._challenge_test_running():
+            self._warn_challenge_test_running()
+            return
         try:
             pattern, adb, serial = self._collect_ui(), self._adb(), self.device_var.get().strip()
             if not serial:
@@ -1894,6 +2350,9 @@ class MainWindow:
         self._background(work, success, "กำลังตรวจ XP และ Pause จาก screenshot เดียว…")
 
     def _test_sync(self) -> None:
+        if self._challenge_test_running():
+            self._warn_challenge_test_running()
+            return
         if self.state.state not in {AppState.IDLE, AppState.STOPPED}:
             messagebox.showwarning(
                 "กำลังอัดหรือเล่นอยู่",
@@ -2033,14 +2492,91 @@ class MainWindow:
         return wait
 
     def _result_waiter(self, adb: ADBManager, serial: str, pattern: dict):
-        def wait(stop_event, cancel_event, expected_duration: float) -> bool:
+        def wait(stop_event, cancel_event, gameplay_end_event, expected_duration: float) -> bool:
             try:
                 detector = self._make_result_detector(
                     adb, serial, pattern,
                     expected_duration=expected_duration,
                     on_similarity=self._result_similarity_callback,
                 )
-                found = detector.wait(stop_event, cancel_event)
+                post_game = pattern.get("post_game", {})
+                started = time.perf_counter()
+                min_gameplay = float(post_game.get("min_gameplay_seconds", 15))
+                scan_after = min(min_gameplay, float(expected_duration)) if expected_duration > 0 else min_gameplay
+                deadline = started + max(
+                    min_gameplay + float(post_game.get("timeout_seconds", 45)),
+                    float(expected_duration) + float(post_game.get("timeout_seconds", 45)),
+                )
+                previous_challenge = None
+                challenge_streak = 0
+                challenge_anchor = None
+                challenge_attempted = False
+                found = False
+                while not stop_event.is_set() and not cancel_event.is_set() and time.perf_counter() < deadline:
+                    elapsed = time.perf_counter() - started
+                    if elapsed < scan_after:
+                        stop_event.wait(min(0.25, scan_after - elapsed))
+                        continue
+                    screenshot, source = adb.capture_image(serial)
+                    _xp, _pause, confirmed_result = detector.check_image(screenshot)
+                    if confirmed_result:
+                        gameplay_end_event.set()
+                        found = True
+                        break
+                    analysis = analyze_card_grid(screenshot) if post_game.get("challenge_enabled", True) else None
+                    if analysis is not None:
+                        # The card screen is already an end-of-game state. Stop
+                        # any remaining gameplay taps before deciding where to click.
+                        gameplay_end_event.set()
+                        self.root.after(0, lambda a=analysis, s=source: self.result_status_var.set(
+                            self._challenge_detection_status(a, s)
+                        ))
+                    if analysis is not None:
+                        same = (
+                            previous_challenge is not None
+                            and previous_challenge.kind == analysis.kind
+                            and previous_challenge.target_slots == analysis.target_slots
+                        )
+                        challenge_streak = challenge_streak + 1 if same else 1
+                        if not same:
+                            challenge_anchor = None
+                        if analysis.confident:
+                            challenge_anchor = analysis
+                        previous_challenge = analysis
+                    else:
+                        previous_challenge = None
+                        challenge_streak = 0
+                        challenge_anchor = None
+                    if challenge_streak >= 3 and challenge_anchor is not None:
+                        if challenge_attempted:
+                            # The final card screen can remain visible briefly
+                            # while Result loads. Observe only; never tap twice.
+                            previous_challenge = None
+                            challenge_streak = 0
+                            challenge_anchor = None
+                            stop_event.wait(0.4)
+                            continue
+                        challenge_attempted = True
+                        timing = self._challenge_timing(post_game)
+                        solver = CardChallengeSolver(
+                            lambda: adb.capture_image(serial)[0],
+                            lambda x, y: adb.shell(serial, f"input tap {x} {y}"),
+                            stop_event,
+                            timing=timing,
+                            on_status=lambda message: self.root.after(
+                                0, lambda value=message: self.result_status_var.set(f"Surprise Card: {value}")
+                            ),
+                        )
+                        rounds = solver.solve_three_rounds(challenge_anchor)
+                        if rounds != 3:
+                            raise ChallengeSolveError(f"เกมการ์ดจบไม่ครบ 3 รอบ ({rounds}/3)")
+                        self.root.after(0, lambda: self.result_status_var.set(
+                            "Surprise Card: ผ่าน 3 รอบแล้ว • กำลังรอหน้า Result XP"
+                        ))
+                        previous_challenge = None
+                        challenge_streak = 0
+                        challenge_anchor = None
+                    stop_event.wait(max(0.4, int(post_game.get("poll_ms", 700)) / 1000))
             except Exception as exc:
                 self.root.after(0, lambda error=exc: self.result_status_var.set(f"Result detector: ใช้งานไม่ได้ • {error}"))
                 return False
@@ -2052,6 +2588,9 @@ class MainWindow:
         return wait
 
     def _play(self) -> None:
+        if self._challenge_test_running():
+            self._warn_challenge_test_running()
+            return
         try:
             pattern, adb, serial = self._collect_ui(), self._adb(), self.device_var.get().strip()
             playback = pattern.get("playback", {})
@@ -2108,6 +2647,9 @@ class MainWindow:
         self._background(lambda: self._probe_selected(adb, serial), ready, "กำลังตรวจอุปกรณ์ก่อนเล่น…")
 
     def _start_recording(self) -> None:
+        if self._challenge_test_running():
+            self._warn_challenge_test_running()
+            return
         if self.state.state in {AppState.RECORDING, AppState.RECORDING_WAITING_SYNC, AppState.WAITING_FOR_AUTO_SYNC}:
             return
         if self.pending_recording:
@@ -2297,9 +2839,12 @@ class MainWindow:
             self.quick_action_var.set("พร้อม: เริ่มอัดใหม่หรือเล่น Pattern เดิม")
             self.message_var.set(f"ไม่บันทึกงานอัด {event_count} Events • Draft ถูกทิ้งตามที่ยืนยันแล้ว")
             return
-        candidate = deepcopy(recorded_pattern)
-        candidate["name"] = target_name
         try:
+            candidate, destination_warnings = prepare_recording_candidate(
+                recorded_pattern,
+                target_name,
+                new_pattern=mode == "new",
+            )
             path, save_warnings = self.store.save(candidate, name=target_name)
             self.current_pattern, load_warnings = self.store.load(target_name)
         except (PatternStoreError, EventValidationError) as exc:
@@ -2312,7 +2857,7 @@ class MainWindow:
         self.recording_timer_var.set(f"■ SAVED  {self._format_elapsed(shown_time)}")
         self.recording_started_var.set(f"บันทึก {path.name} สำเร็จ • พร้อมเล่น")
         self.quick_action_var.set("พร้อม: อัดใหม่หรือเล่น Pattern ที่เพิ่งบันทึก")
-        all_warnings = warnings + save_warnings + load_warnings
+        all_warnings = warnings + destination_warnings + save_warnings + load_warnings
         self.message_var.set(
             f"บันทึกงานอัดลง {path.name} แล้ว ({len(self.current_pattern['events'])} Events)"
             + (f" • {'; '.join(all_warnings)}" if all_warnings else "")
@@ -2332,6 +2877,8 @@ class MainWindow:
 
     def _emergency_stop(self) -> None:
         final_status = self.recorder.status()
+        if self.challenge_test_stop is not None:
+            self.challenge_test_stop.set()
         self.operation_token += 1
         if self.player:
             self.player.stop()
@@ -2467,7 +3014,7 @@ class MainWindow:
             pass
 
     def _on_close(self) -> None:
-        if self.player or self.state.state in {AppState.RECORDING, AppState.PLAYING, AppState.WAITING_FOR_AUTO_SYNC, AppState.WAITING_FOR_MANUAL_SYNC}:
+        if self.player or self._challenge_test_running() or self.state.state in {AppState.RECORDING, AppState.PLAYING, AppState.WAITING_FOR_AUTO_SYNC, AppState.WAITING_FOR_MANUAL_SYNC}:
             if not messagebox.askyesno("ปิดโปรแกรม", "กำลังทำงานอยู่ ต้องการหยุดทุกอย่างและปิดโปรแกรมหรือไม่?", parent=self.root):
                 return
         if self.pending_recording:
@@ -2483,6 +3030,8 @@ class MainWindow:
             self.live_view.close()
         if self.player:
             self.player.stop()
+        if self.challenge_test_stop is not None:
+            self.challenge_test_stop.set()
         self.recorder.stop()
         if self.active_adb:
             self.active_adb.cancel_all()

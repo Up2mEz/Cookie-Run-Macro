@@ -9,7 +9,7 @@ from copy import deepcopy
 from pathlib import Path, PurePath
 from typing import Any
 
-from event_model import EventValidationError, normalize_pattern
+from event_model import EDITOR_VALIDATION_ERROR, EventValidationError, editable_pattern_errors, normalize_pattern, normalize_pattern_for_editing
 
 
 class PatternStoreError(RuntimeError):
@@ -64,7 +64,7 @@ class PatternStore:
             except ValueError as exc:
                 raise PatternStoreError(f"{label} template_path ต้องอยู่ภายในโฟลเดอร์โปรเจกต์") from exc
 
-    def load(self, name_or_path: str | Path, *, migrate: bool = True) -> tuple[dict[str, Any], list[str]]:
+    def _read_pattern_file(self, name_or_path: str | Path) -> tuple[Path, Any]:
         candidate = Path(name_or_path)
         path = candidate if candidate.suffix.lower() == ".json" else self.path_for(str(name_or_path))
         if not path.is_absolute():
@@ -72,11 +72,14 @@ class PatternStore:
         if not path.is_file():
             raise PatternStoreError(f"ไม่พบ Pattern: {path.name}")
         try:
-            raw = json.loads(path.read_text(encoding="utf-8"))
+            return path, json.loads(path.read_text(encoding="utf-8"))
         except json.JSONDecodeError as exc:
             raise PatternStoreError(f"ไฟล์ JSON เสียหายที่บรรทัด {exc.lineno}: {exc.msg}") from exc
         except OSError as exc:
             raise PatternStoreError(f"อ่าน Pattern ไม่สำเร็จ: {exc}") from exc
+
+    def load(self, name_or_path: str | Path, *, migrate: bool = True) -> tuple[dict[str, Any], list[str]]:
+        path, raw = self._read_pattern_file(name_or_path)
         old_version = int(raw.get("schema_version", 1)) if isinstance(raw, dict) else 1
         try:
             normalized, warnings = normalize_pattern(raw)
@@ -91,6 +94,18 @@ class PatternStore:
             warnings.append(f"สำรองไฟล์เดิมไว้ที่ {backup_path.name}")
         return normalized, warnings
 
+    def load_for_editing(self, name_or_path: str | Path) -> tuple[dict[str, Any], list[str]]:
+        """Open event-level validation failures without weakening strict save/play."""
+        path, raw = self._read_pattern_file(name_or_path)
+        try:
+            editable, warnings = normalize_pattern_for_editing(raw)
+        except (EventValidationError, TypeError, ValueError) as exc:
+            raise PatternStoreError(f"Pattern เปิดเพื่อแก้ไขไม่ได้: {exc}") from exc
+        self._validate_template_path(editable)
+        if not editable_pattern_errors(editable):
+            return self.load(name_or_path)
+        return editable, warnings
+
     def save(self, pattern: dict[str, Any], name: str | None = None) -> tuple[Path, list[str]]:
         try:
             normalized, warnings = normalize_pattern(pattern)
@@ -101,6 +116,30 @@ class PatternStore:
             normalized["name"] = name.strip() or normalized["name"]
         path = self.path_for(normalized["name"])
         self._atomic_write(path, normalized)
+        return path, warnings
+
+    def save_for_editing(self, pattern: dict[str, Any], name: str | None = None) -> tuple[Path, list[str]]:
+        """Atomically save repair progress while strict playback remains blocked."""
+        editable, warnings = normalize_pattern_for_editing(pattern)
+        errors = editable_pattern_errors(editable)
+        candidate = deepcopy(editable)
+        for event in candidate.get("events", []):
+            if isinstance(event, dict):
+                event.pop(EDITOR_VALIDATION_ERROR, None)
+        self._validate_template_path(candidate)
+        if name:
+            candidate["name"] = name.strip() or candidate["name"]
+        path = self.path_for(candidate["name"])
+        backup_path = path.with_suffix(path.suffix + ".repair.bak")
+        if path.exists() and not backup_path.exists():
+            try:
+                shutil.copy2(path, backup_path)
+            except OSError as exc:
+                raise PatternStoreError(f"สำรอง Pattern ก่อนซ่อมไม่สำเร็จ: {exc}") from exc
+            warnings.append(f"สำรองไฟล์ก่อนซ่อมไว้ที่ {backup_path.name}")
+        self._atomic_write(path, candidate)
+        if errors:
+            warnings.append(f"บันทึกความคืบหน้าโหมดซ่อมแล้ว • ยังเล่นไม่ได้จนกว่าจะแก้ครบ {len(errors)} Event")
         return path, warnings
 
     def _atomic_write(self, path: Path, data: dict[str, Any]) -> None:

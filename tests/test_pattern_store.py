@@ -5,6 +5,7 @@ from pathlib import Path
 
 from PIL import Image
 
+from event_model import editable_pattern_errors
 from pattern_store import PatternStore, PatternStoreError
 
 
@@ -44,6 +45,40 @@ class PatternStoreTests(unittest.TestCase):
         (self.store.patterns_dir / "bad.json").write_text("{bad", encoding="utf-8")
         with self.assertRaisesRegex(PatternStoreError, "JSON เสียหาย"):
             self.store.load("bad")
+
+    def test_invalid_event_opens_in_repair_mode_and_progress_can_be_saved(self):
+        path = self.store.patterns_dir / "repair.json"
+        path.write_text(json.dumps({
+            "name": "repair",
+            "safe_zones": [{"id": "z", "start": 1, "end": 2, "label": "safe"}],
+            "events": [
+                {"id": "bad", "at": 1.8, "phase": "synced", "event_class": "safe_random",
+                 "type": "choice", "options": {"none": 40, "jump": 40, "slide": 20},
+                 "duration_ms": 400, "jitter_ms": 0, "safe_zone_id": "z"},
+                {"id": "ok", "at": 1.2, "phase": "synced", "event_class": "safe_random",
+                 "type": "choice", "options": {"none": 100, "jump": 0, "slide": 0},
+                 "jitter_ms": 0, "safe_zone_id": "z"},
+            ],
+        }), encoding="utf-8")
+
+        with self.assertRaisesRegex(PatternStoreError, "สิ้นสุดนอก Safe Zone"):
+            self.store.load("repair")
+
+        editable, warnings = self.store.load_for_editing("repair")
+        self.assertEqual(len(editable_pattern_errors(editable)), 1)
+        self.assertEqual(editable["events"][0]["id"], "bad")
+        self.assertTrue(any("โหมดซ่อม" in warning for warning in warnings))
+
+        saved_path, save_warnings = self.store.save_for_editing(editable)
+        saved_raw = json.loads(saved_path.read_text(encoding="utf-8"))
+        self.assertNotIn("_validation_error", saved_raw["events"][0])
+        self.assertTrue(saved_path.with_suffix(".json.repair.bak").exists())
+        self.assertTrue(any("ยังเล่นไม่ได้" in warning for warning in save_warnings))
+
+        editable["safe_zones"][0]["end"] = 2.3
+        repaired_path, _ = self.store.save(editable)
+        repaired, _ = self.store.load(repaired_path)
+        self.assertEqual(editable_pattern_errors(repaired), [])
 
     def test_export_import_zip_includes_both_templates_and_renames_collision(self):
         pause_template = self.store.templates_dir / "pause.png"

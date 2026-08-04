@@ -17,6 +17,27 @@ class RecorderError(RuntimeError):
 DOUBLE_JUMP_MAX_GAP_MS = 650
 
 
+def prepare_recording_candidate(
+    recorded_pattern: dict,
+    target_name: str,
+    *,
+    new_pattern: bool,
+) -> tuple[dict, list[str]]:
+    """Prepare a recording for New vs Overwrite without leaking old Safe Zones.
+
+    Recording starts from the currently selected Pattern so it can reuse device,
+    sync, and playback settings.  A genuinely new destination must behave like a
+    clean/Set Zero Pattern: it keeps the recorded Events but starts with no Safe
+    Zones.  Normalization then restores system-converted Safe Random Events to
+    their original Required actions.
+    """
+    candidate = deepcopy(recorded_pattern)
+    candidate["name"] = target_name
+    if new_pattern:
+        candidate["safe_zones"] = []
+    return normalize_pattern(candidate)
+
+
 class Recorder:
     def __init__(self, state: StateMachine) -> None:
         self.state = state

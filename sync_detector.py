@@ -516,6 +516,11 @@ class ResultDetector:
 
     def check_once(self) -> tuple[float, float | None, bool]:
         screenshot = decode_png(self.capture_png())
+        return self.check_image(screenshot)
+
+    def check_image(self, screenshot: Image.Image) -> tuple[float, float | None, bool]:
+        """Check an already captured frame so an end-screen router can reuse it."""
+        screenshot = screenshot.convert("RGB")
         if self.expected_size and screenshot.size != self.expected_size:
             raise SyncError(
                 f"Resolution ไม่ตรงกับ Result template: คาด {self.expected_size[0]}x{self.expected_size[1]} "

@@ -2,3 +2,11 @@ __pycache__/
 *.py[cod]
 *.tmp
 *.log
+
+# Per-machine Python environment
+.venv/
+venv/
+
+# Generated repair/test artifacts
+patterns/*.json.repair.bak
+patterns/*_test.json

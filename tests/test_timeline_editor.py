@@ -59,6 +59,19 @@ class TimelineHelpersTests(unittest.TestCase):
 
         self.assertEqual(selected, ["zone_007"])
 
+    def test_zone_edge_hit_wins_at_same_position_as_event(self):
+        editor = object.__new__(TimelineEditor)
+        editor.pattern = {
+            "events": [{"id": "event-on-edge", "phase": "synced", "at": 4.0}],
+            "safe_zones": [{"id": "zone_007", "start": 4.0, "end": 6.0}],
+        }
+        editor.pixels_per_second = 70.0
+
+        hit = editor._zone_edge_at(editor._time_to_x(4.0), 120)
+
+        self.assertIsNotNone(hit)
+        self.assertEqual((hit[0]["id"], hit[1]), ("zone_007", "start"))
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -29,7 +29,7 @@
     },
     "poll_ms": 20,
     "threshold": 0.82,
-    "consecutive_matches": 5,
+    "consecutive_matches": 2,
     "timeout_seconds": 5,
     "offset_ms": 0,
     "manual_fallback": true
@@ -49,7 +49,14 @@
     "consecutive_matches": 3,
     "min_gameplay_seconds": 15,
     "timeout_seconds": 45,
-    "pause_absent_threshold": 0.8
+    "pause_absent_threshold": 0.8,
+    "challenge_enabled": true,
+    "challenge_first_click_delay_ms": 1000,
+    "challenge_inter_card_min_ms": 500,
+    "challenge_inter_card_max_ms": 900,
+    "challenge_next_round_min_ms": 1800,
+    "challenge_next_round_max_ms": 2200,
+    "challenge_transition_timeout_ms": 6500
   },
   "recording": {
     "rapid_tap_to_hold": true,
@@ -59,12 +66,17 @@
     "repeat_count": 1,
     "loop_forever": true,
     "loop_interval_ms": 10000,
-    "pre_sync_extra_ms": 350,
+    "pre_sync_extra_ms": 300,
+    "pre_sync_delay_mode": "fixed",
+    "pre_sync_random_min_ms": 300,
+    "pre_sync_random_max_ms": 500,
+    "pre_sync_random_min_delta_ms": 50,
+    "pre_sync_random_history": 3,
     "sync_each_loop": true
   },
   "stats": {
-    "play_count": 45,
-    "last_played_at": "2026-07-22T12:40:27+07:00"
+    "play_count": 81,
+    "last_played_at": "2026-08-03T14:27:47+07:00"
   },
   "events": [
     {
@@ -124,8 +136,8 @@
       "type": "choice",
       "jitter_ms": 0,
       "options": {
-        "none": 40,
-        "jump": 40,
+        "none": 50,
+        "jump": 30,
         "slide": 20
       },
       "safe_zone_id": "zone_ต้นเกม",
@@ -141,8 +153,8 @@
       "duration_ms": 400,
       "safe_zone_id": "zone_ต้นเกม",
       "options": {
-        "none": 40,
-        "jump": 40,
+        "none": 50,
+        "jump": 30,
         "slide": 20
       }
     },
@@ -168,8 +180,8 @@
       "duration_ms": 400,
       "safe_zone_id": "zone_ต้นเกม",
       "options": {
-        "none": 40,
-        "jump": 40,
+        "none": 50,
+        "jump": 30,
         "slide": 20
       }
     },
@@ -183,8 +195,8 @@
       "duration_ms": 400,
       "safe_zone_id": "zone_ต้นเกม",
       "options": {
-        "none": 40,
-        "jump": 40,
+        "none": 50,
+        "jump": 30,
         "slide": 20
       }
     },
@@ -211,6 +223,25 @@
       "jitter_ms": 0,
       "x": 626,
       "y": 600
+    },
+    {
+      "id": "evt_0005",
+      "at": 5.603353,
+      "phase": "pre_sync",
+      "event_class": "required",
+      "type": "adaptive_wait",
+      "action": "tap",
+      "chance": 100,
+      "jitter_ms": 0,
+      "detect_x": 1040,
+      "detect_y": 672,
+      "detect_radius": 24,
+      "stable_frames": 2,
+      "poll_ms": 250,
+      "arm_delay_ms": 150,
+      "success_delay_ms": 250,
+      "timeout_seconds": 0,
+      "change_threshold": 0.12
     },
     {
       "id": "evt_0518",
@@ -444,8 +475,8 @@
       "type": "choice",
       "jitter_ms": 0,
       "options": {
-        "none": 40,
-        "jump": 40,
+        "none": 50,
+        "jump": 30,
         "slide": 20
       },
       "safe_zone_id": "zone_หลังspeed",
@@ -459,8 +490,8 @@
       "type": "choice",
       "jitter_ms": 0,
       "options": {
-        "none": 40,
-        "jump": 40,
+        "none": 50,
+        "jump": 30,
         "slide": 20
       },
       "safe_zone_id": "zone_หลังspeed",
@@ -474,8 +505,8 @@
       "type": "choice",
       "jitter_ms": 0,
       "options": {
-        "none": 40,
-        "jump": 40,
+        "none": 50,
+        "jump": 30,
         "slide": 20
       },
       "safe_zone_id": "zone_หลังspeed",
@@ -489,8 +520,8 @@
       "type": "choice",
       "jitter_ms": 0,
       "options": {
-        "none": 40,
-        "jump": 40,
+        "none": 50,
+        "jump": 30,
         "slide": 20
       },
       "safe_zone_id": "zone_หลังspeed",
@@ -504,8 +535,8 @@
       "type": "choice",
       "jitter_ms": 0,
       "options": {
-        "none": 40,
-        "jump": 40,
+        "none": 50,
+        "jump": 30,
         "slide": 20
       },
       "safe_zone_id": "zone_หลังspeed",
@@ -519,8 +550,8 @@
       "type": "choice",
       "jitter_ms": 0,
       "options": {
-        "none": 40,
-        "jump": 40,
+        "none": 50,
+        "jump": 30,
         "slide": 20
       },
       "safe_zone_id": "zone_หลังspeed",
@@ -534,8 +565,8 @@
       "type": "choice",
       "jitter_ms": 0,
       "options": {
-        "none": 40,
-        "jump": 40,
+        "none": 50,
+        "jump": 30,
         "slide": 20
       },
       "safe_zone_id": "zone_หลังspeed",
@@ -550,8 +581,8 @@
       "duration_ms": 192,
       "jitter_ms": 0,
       "options": {
-        "none": 40,
-        "jump": 40,
+        "none": 50,
+        "jump": 30,
         "slide": 20
       },
       "safe_zone_id": "zone_หลังspeed"
@@ -564,8 +595,8 @@
       "type": "choice",
       "jitter_ms": 0,
       "options": {
-        "none": 40,
-        "jump": 40,
+        "none": 50,
+        "jump": 30,
         "slide": 20
       },
       "safe_zone_id": "zone_หลังspeed",
@@ -579,8 +610,8 @@
       "type": "choice",
       "jitter_ms": 0,
       "options": {
-        "none": 40,
-        "jump": 40,
+        "none": 50,
+        "jump": 30,
         "slide": 20
       },
       "safe_zone_id": "zone_หลังspeed",
@@ -595,8 +626,8 @@
       "duration_ms": 226,
       "jitter_ms": 0,
       "options": {
-        "none": 40,
-        "jump": 40,
+        "none": 50,
+        "jump": 30,
         "slide": 20
       },
       "safe_zone_id": "zone_หลังspeed"
@@ -609,8 +640,8 @@
       "type": "choice",
       "jitter_ms": 0,
       "options": {
-        "none": 40,
-        "jump": 40,
+        "none": 50,
+        "jump": 30,
         "slide": 20
       },
       "safe_zone_id": "zone_หลังspeed",
@@ -624,8 +655,8 @@
       "type": "choice",
       "jitter_ms": 0,
       "options": {
-        "none": 40,
-        "jump": 40,
+        "none": 50,
+        "jump": 30,
         "slide": 20
       },
       "safe_zone_id": "zone_หลังspeed",
@@ -639,8 +670,8 @@
       "type": "choice",
       "jitter_ms": 0,
       "options": {
-        "none": 40,
-        "jump": 40,
+        "none": 50,
+        "jump": 30,
         "slide": 20
       },
       "safe_zone_id": "zone_หลังspeed",
@@ -654,8 +685,8 @@
       "type": "choice",
       "jitter_ms": 0,
       "options": {
-        "none": 40,
-        "jump": 40,
+        "none": 50,
+        "jump": 30,
         "slide": 20
       },
       "safe_zone_id": "zone_หลังspeed",
@@ -670,8 +701,8 @@
       "duration_ms": 251,
       "jitter_ms": 0,
       "options": {
-        "none": 40,
-        "jump": 40,
+        "none": 50,
+        "jump": 30,
         "slide": 20
       },
       "safe_zone_id": "zone_หลังspeed"
@@ -684,8 +715,8 @@
       "type": "choice",
       "jitter_ms": 0,
       "options": {
-        "none": 40,
-        "jump": 40,
+        "none": 50,
+        "jump": 30,
         "slide": 20
       },
       "safe_zone_id": "zone_หลังspeed",
@@ -699,8 +730,8 @@
       "type": "choice",
       "jitter_ms": 0,
       "options": {
-        "none": 40,
-        "jump": 40,
+        "none": 50,
+        "jump": 30,
         "slide": 20
       },
       "safe_zone_id": "zone_หลังspeed",
@@ -710,31 +741,21 @@
       "id": "evt_0047",
       "at": 30.401435,
       "phase": "synced",
-      "event_class": "safe_random",
-      "type": "choice",
-      "jitter_ms": 0,
-      "options": {
-        "none": 40,
-        "jump": 40,
-        "slide": 20
-      },
-      "safe_zone_id": "zone_หลังspeed",
-      "duration_ms": 400
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
     },
     {
       "id": "evt_0048",
       "at": 30.582216,
       "phase": "synced",
-      "event_class": "safe_random",
-      "type": "choice",
-      "jitter_ms": 0,
-      "options": {
-        "none": 40,
-        "jump": 40,
-        "slide": 20
-      },
-      "safe_zone_id": "zone_หลังspeed",
-      "duration_ms": 400
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
     },
     {
       "id": "evt_0049",
@@ -857,7 +878,7 @@
       "jitter_ms": 0
     },
     {
-      "id": "evt_0005",
+      "id": "evt_0005_play",
       "at": 37.367209,
       "phase": "pre_sync",
       "event_class": "required",
@@ -1097,8 +1118,8 @@
       "type": "choice",
       "jitter_ms": 0,
       "options": {
-        "none": 40,
-        "jump": 40,
+        "none": 50,
+        "jump": 30,
         "slide": 20
       },
       "safe_zone_id": "zone_003",
@@ -1112,8 +1133,8 @@
       "type": "choice",
       "jitter_ms": 0,
       "options": {
-        "none": 40,
-        "jump": 40,
+        "none": 50,
+        "jump": 30,
         "slide": 20
       },
       "safe_zone_id": "zone_003",
@@ -1127,32 +1148,48 @@
       "type": "choice",
       "jitter_ms": 0,
       "options": {
-        "none": 40,
-        "jump": 40,
+        "none": 50,
+        "jump": 30,
         "slide": 20
       },
       "safe_zone_id": "zone_003",
+      "safe_zone_auto": true,
+      "safe_zone_source_action": "jump",
       "duration_ms": 400
     },
     {
       "id": "evt_0086",
       "at": 52.577904,
       "phase": "synced",
-      "event_class": "required",
-      "type": "action",
-      "action": "jump",
-      "chance": 100,
-      "jitter_ms": 0
+      "event_class": "safe_random",
+      "type": "choice",
+      "jitter_ms": 0,
+      "options": {
+        "none": 50,
+        "jump": 30,
+        "slide": 20
+      },
+      "safe_zone_id": "zone_003",
+      "safe_zone_auto": true,
+      "safe_zone_source_action": "jump",
+      "duration_ms": 400
     },
     {
       "id": "evt_0087",
       "at": 52.812124,
       "phase": "synced",
-      "event_class": "required",
-      "type": "action",
-      "action": "jump",
-      "chance": 100,
-      "jitter_ms": 0
+      "event_class": "safe_random",
+      "type": "choice",
+      "jitter_ms": 0,
+      "options": {
+        "none": 50,
+        "jump": 30,
+        "slide": 20
+      },
+      "safe_zone_id": "zone_003",
+      "safe_zone_auto": true,
+      "safe_zone_source_action": "jump",
+      "duration_ms": 400
     },
     {
       "id": "evt_0088",
@@ -1435,8 +1472,8 @@
       "type": "choice",
       "jitter_ms": 0,
       "options": {
-        "none": 40,
-        "jump": 40,
+        "none": 50,
+        "jump": 30,
         "slide": 20
       },
       "safe_zone_id": "zone_bonus",
@@ -1450,8 +1487,8 @@
       "type": "choice",
       "jitter_ms": 0,
       "options": {
-        "none": 40,
-        "jump": 40,
+        "none": 50,
+        "jump": 30,
         "slide": 20
       },
       "safe_zone_id": "zone_bonus",
@@ -1465,8 +1502,8 @@
       "type": "choice",
       "jitter_ms": 0,
       "options": {
-        "none": 40,
-        "jump": 40,
+        "none": 50,
+        "jump": 30,
         "slide": 20
       },
       "safe_zone_id": "zone_bonus",
@@ -1480,8 +1517,8 @@
       "type": "choice",
       "jitter_ms": 0,
       "options": {
-        "none": 40,
-        "jump": 40,
+        "none": 50,
+        "jump": 30,
         "slide": 20
       },
       "safe_zone_id": "zone_bonus",
@@ -1495,8 +1532,8 @@
       "type": "choice",
       "jitter_ms": 0,
       "options": {
-        "none": 40,
-        "jump": 40,
+        "none": 50,
+        "jump": 30,
         "slide": 20
       },
       "safe_zone_id": "zone_bonus",
@@ -1510,8 +1547,8 @@
       "type": "choice",
       "jitter_ms": 0,
       "options": {
-        "none": 40,
-        "jump": 40,
+        "none": 50,
+        "jump": 30,
         "slide": 20
       },
       "safe_zone_id": "zone_bonus",
@@ -1525,8 +1562,8 @@
       "type": "choice",
       "jitter_ms": 0,
       "options": {
-        "none": 40,
-        "jump": 40,
+        "none": 50,
+        "jump": 30,
         "slide": 20
       },
       "safe_zone_id": "zone_bonus",
@@ -1540,8 +1577,8 @@
       "type": "choice",
       "jitter_ms": 0,
       "options": {
-        "none": 40,
-        "jump": 40,
+        "none": 50,
+        "jump": 30,
         "slide": 20
       },
       "safe_zone_id": "zone_bonus",
@@ -1555,8 +1592,8 @@
       "type": "choice",
       "jitter_ms": 0,
       "options": {
-        "none": 40,
-        "jump": 40,
+        "none": 50,
+        "jump": 30,
         "slide": 20
       },
       "safe_zone_id": "zone_bonus",
@@ -1570,8 +1607,8 @@
       "type": "choice",
       "jitter_ms": 0,
       "options": {
-        "none": 40,
-        "jump": 40,
+        "none": 50,
+        "jump": 30,
         "slide": 20
       },
       "safe_zone_id": "zone_bonus",
@@ -1585,8 +1622,8 @@
       "type": "choice",
       "jitter_ms": 0,
       "options": {
-        "none": 40,
-        "jump": 40,
+        "none": 50,
+        "jump": 30,
         "slide": 20
       },
       "safe_zone_id": "zone_bonus",
@@ -1600,8 +1637,8 @@
       "type": "choice",
       "jitter_ms": 0,
       "options": {
-        "none": 40,
-        "jump": 40,
+        "none": 50,
+        "jump": 30,
         "slide": 20
       },
       "safe_zone_id": "zone_bonus",
@@ -1615,8 +1652,8 @@
       "type": "choice",
       "jitter_ms": 0,
       "options": {
-        "none": 40,
-        "jump": 40,
+        "none": 50,
+        "jump": 30,
         "slide": 20
       },
       "safe_zone_id": "zone_bonus",
@@ -1630,8 +1667,8 @@
       "type": "choice",
       "jitter_ms": 0,
       "options": {
-        "none": 40,
-        "jump": 40,
+        "none": 50,
+        "jump": 30,
         "slide": 20
       },
       "safe_zone_id": "zone_bonus",
@@ -1645,23 +1682,32 @@
       "type": "choice",
       "jitter_ms": 0,
       "options": {
-        "none": 40,
-        "jump": 40,
+        "none": 50,
+        "jump": 30,
         "slide": 20
       },
       "safe_zone_id": "zone_bonus",
+      "safe_zone_auto": true,
+      "safe_zone_source_action": "jump",
       "duration_ms": 400
     },
     {
       "id": "evt_0130",
       "at": 77.942488,
       "phase": "synced",
-      "event_class": "required",
-      "type": "action",
-      "action": "slide",
+      "event_class": "safe_random",
+      "type": "choice",
       "duration_ms": 183,
-      "chance": 100,
-      "jitter_ms": 0
+      "jitter_ms": 0,
+      "options": {
+        "none": 50,
+        "jump": 30,
+        "slide": 20
+      },
+      "safe_zone_id": "zone_bonus",
+      "safe_zone_auto": true,
+      "safe_zone_source_action": "slide",
+      "safe_zone_source_duration_ms": 183
     },
     {
       "id": "evt_0131",
@@ -1749,8 +1795,8 @@
       "duration_ms": 253,
       "jitter_ms": 0,
       "options": {
-        "none": 40,
-        "jump": 40,
+        "none": 50,
+        "jump": 30,
         "slide": 20
       },
       "safe_zone_id": "zone_bonus late"
@@ -1764,8 +1810,8 @@
       "duration_ms": 227,
       "jitter_ms": 0,
       "options": {
-        "none": 40,
-        "jump": 40,
+        "none": 50,
+        "jump": 30,
         "slide": 20
       },
       "safe_zone_id": "zone_bonus late"
@@ -1779,8 +1825,8 @@
       "duration_ms": 384,
       "jitter_ms": 0,
       "options": {
-        "none": 40,
-        "jump": 40,
+        "none": 50,
+        "jump": 30,
         "slide": 20
       },
       "safe_zone_id": "zone_bonus late"
@@ -1794,8 +1840,8 @@
       "duration_ms": 180,
       "jitter_ms": 0,
       "options": {
-        "none": 40,
-        "jump": 40,
+        "none": 50,
+        "jump": 30,
         "slide": 20
       },
       "safe_zone_id": "zone_bonus late"
@@ -1809,8 +1855,8 @@
       "duration_ms": 155,
       "jitter_ms": 0,
       "options": {
-        "none": 40,
-        "jump": 40,
+        "none": 50,
+        "jump": 30,
         "slide": 20
       },
       "safe_zone_id": "zone_bonus late"
@@ -1824,8 +1870,8 @@
       "duration_ms": 195,
       "jitter_ms": 0,
       "options": {
-        "none": 40,
-        "jump": 40,
+        "none": 50,
+        "jump": 30,
         "slide": 20
       },
       "safe_zone_id": "zone_bonus late"
@@ -1898,8 +1944,8 @@
       "type": "choice",
       "jitter_ms": 0,
       "options": {
-        "none": 40,
-        "jump": 40,
+        "none": 50,
+        "jump": 30,
         "slide": 20
       },
       "safe_zone_id": "zone_004",
@@ -1913,8 +1959,8 @@
       "type": "choice",
       "jitter_ms": 0,
       "options": {
-        "none": 40,
-        "jump": 40,
+        "none": 50,
+        "jump": 30,
         "slide": 20
       },
       "safe_zone_id": "zone_004",
@@ -1928,8 +1974,8 @@
       "type": "choice",
       "jitter_ms": 0,
       "options": {
-        "none": 40,
-        "jump": 40,
+        "none": 50,
+        "jump": 30,
         "slide": 20
       },
       "safe_zone_id": "zone_004",
@@ -2195,8 +2241,8 @@
       "type": "choice",
       "jitter_ms": 0,
       "options": {
-        "none": 40,
-        "jump": 40,
+        "none": 50,
+        "jump": 30,
         "slide": 20
       },
       "safe_zone_id": "zone_009",
@@ -2210,8 +2256,8 @@
       "type": "choice",
       "jitter_ms": 0,
       "options": {
-        "none": 40,
-        "jump": 40,
+        "none": 50,
+        "jump": 30,
         "slide": 20
       },
       "safe_zone_id": "zone_009",
@@ -2225,8 +2271,8 @@
       "type": "choice",
       "jitter_ms": 0,
       "options": {
-        "none": 40,
-        "jump": 40,
+        "none": 50,
+        "jump": 30,
         "slide": 20
       },
       "safe_zone_id": "zone_009",
@@ -2240,8 +2286,8 @@
       "type": "choice",
       "jitter_ms": 0,
       "options": {
-        "none": 40,
-        "jump": 40,
+        "none": 50,
+        "jump": 30,
         "slide": 20
       },
       "safe_zone_id": "zone_009",
@@ -2255,8 +2301,8 @@
       "type": "choice",
       "jitter_ms": 0,
       "options": {
-        "none": 40,
-        "jump": 40,
+        "none": 50,
+        "jump": 30,
         "slide": 20
       },
       "safe_zone_id": "zone_009",
@@ -2270,8 +2316,8 @@
       "type": "choice",
       "jitter_ms": 0,
       "options": {
-        "none": 40,
-        "jump": 40,
+        "none": 50,
+        "jump": 30,
         "slide": 20
       },
       "safe_zone_id": "zone_009",
@@ -2285,8 +2331,8 @@
       "type": "choice",
       "jitter_ms": 0,
       "options": {
-        "none": 40,
-        "jump": 40,
+        "none": 50,
+        "jump": 30,
         "slide": 20
       },
       "safe_zone_id": "zone_009",
@@ -2296,11 +2342,18 @@
       "id": "evt_0185",
       "at": 110.664144,
       "phase": "synced",
-      "event_class": "required",
-      "type": "action",
-      "action": "jump",
-      "chance": 100,
-      "jitter_ms": 0
+      "event_class": "safe_random",
+      "type": "choice",
+      "jitter_ms": 0,
+      "options": {
+        "none": 50,
+        "jump": 30,
+        "slide": 20
+      },
+      "safe_zone_id": "zone_009",
+      "safe_zone_auto": true,
+      "safe_zone_source_action": "jump",
+      "duration_ms": 400
     },
     {
       "id": "evt_0186",
@@ -2330,8 +2383,8 @@
       "type": "choice",
       "jitter_ms": 0,
       "options": {
-        "none": 40,
-        "jump": 40,
+        "none": 50,
+        "jump": 30,
         "slide": 20
       },
       "safe_zone_id": "zone_010",
@@ -2345,8 +2398,8 @@
       "type": "choice",
       "jitter_ms": 0,
       "options": {
-        "none": 40,
-        "jump": 40,
+        "none": 50,
+        "jump": 30,
         "slide": 20
       },
       "safe_zone_id": "zone_010",
@@ -2360,8 +2413,8 @@
       "type": "choice",
       "jitter_ms": 0,
       "options": {
-        "none": 40,
-        "jump": 40,
+        "none": 50,
+        "jump": 30,
         "slide": 20
       },
       "safe_zone_id": "zone_010",
@@ -2375,8 +2428,8 @@
       "type": "choice",
       "jitter_ms": 0,
       "options": {
-        "none": 40,
-        "jump": 40,
+        "none": 50,
+        "jump": 30,
         "slide": 20
       },
       "safe_zone_id": "zone_010",
@@ -2390,8 +2443,8 @@
       "type": "choice",
       "jitter_ms": 0,
       "options": {
-        "none": 40,
-        "jump": 40,
+        "none": 50,
+        "jump": 30,
         "slide": 20
       },
       "safe_zone_id": "zone_010",
@@ -2405,8 +2458,8 @@
       "type": "choice",
       "jitter_ms": 0,
       "options": {
-        "none": 40,
-        "jump": 40,
+        "none": 50,
+        "jump": 30,
         "slide": 20
       },
       "safe_zone_id": "zone_010",
@@ -2420,8 +2473,8 @@
       "type": "choice",
       "jitter_ms": 0,
       "options": {
-        "none": 40,
-        "jump": 40,
+        "none": 50,
+        "jump": 30,
         "slide": 20
       },
       "safe_zone_id": "zone_010",
@@ -3435,8 +3488,8 @@
       "type": "choice",
       "jitter_ms": 0,
       "options": {
-        "none": 40,
-        "jump": 40,
+        "none": 50,
+        "jump": 30,
         "slide": 20
       },
       "safe_zone_id": "zone_005",
@@ -3450,8 +3503,8 @@
       "type": "choice",
       "jitter_ms": 0,
       "options": {
-        "none": 40,
-        "jump": 40,
+        "none": 50,
+        "jump": 30,
         "slide": 20
       },
       "safe_zone_id": "zone_005",
@@ -3465,8 +3518,8 @@
       "type": "choice",
       "jitter_ms": 0,
       "options": {
-        "none": 40,
-        "jump": 40,
+        "none": 50,
+        "jump": 30,
         "slide": 20
       },
       "safe_zone_id": "zone_005",
@@ -3480,8 +3533,8 @@
       "type": "choice",
       "jitter_ms": 0,
       "options": {
-        "none": 40,
-        "jump": 40,
+        "none": 50,
+        "jump": 30,
         "slide": 20
       },
       "safe_zone_id": "zone_005",
@@ -3495,8 +3548,8 @@
       "type": "choice",
       "jitter_ms": 0,
       "options": {
-        "none": 40,
-        "jump": 40,
+        "none": 50,
+        "jump": 30,
         "slide": 20
       },
       "safe_zone_id": "zone_005",
@@ -3510,8 +3563,8 @@
       "type": "choice",
       "jitter_ms": 0,
       "options": {
-        "none": 40,
-        "jump": 40,
+        "none": 50,
+        "jump": 30,
         "slide": 20
       },
       "safe_zone_id": "zone_005",
@@ -3525,8 +3578,8 @@
       "type": "choice",
       "jitter_ms": 0,
       "options": {
-        "none": 40,
-        "jump": 40,
+        "none": 50,
+        "jump": 30,
         "slide": 20
       },
       "safe_zone_id": "zone_005",
@@ -3670,8 +3723,8 @@
       "type": "choice",
       "jitter_ms": 0,
       "options": {
-        "none": 40,
-        "jump": 40,
+        "none": 50,
+        "jump": 30,
         "slide": 20
       },
       "safe_zone_id": "zone_002",
@@ -3685,8 +3738,8 @@
       "type": "choice",
       "jitter_ms": 0,
       "options": {
-        "none": 40,
-        "jump": 40,
+        "none": 50,
+        "jump": 30,
         "slide": 20
       },
       "safe_zone_id": "zone_002",
@@ -3700,8 +3753,8 @@
       "type": "choice",
       "jitter_ms": 0,
       "options": {
-        "none": 40,
-        "jump": 40,
+        "none": 50,
+        "jump": 30,
         "slide": 20
       },
       "safe_zone_id": "zone_002",
@@ -3715,23 +3768,8 @@
       "type": "choice",
       "jitter_ms": 0,
       "options": {
-        "none": 40,
-        "jump": 40,
-        "slide": 20
-      },
-      "safe_zone_id": "zone_002",
-      "duration_ms": 400
-    },
-    {
-      "id": "evt_0323",
-      "at": 189.319158,
-      "phase": "synced",
-      "event_class": "safe_random",
-      "type": "choice",
-      "jitter_ms": 0,
-      "options": {
-        "none": 40,
-        "jump": 40,
+        "none": 50,
+        "jump": 30,
         "slide": 20
       },
       "safe_zone_id": "zone_002",
@@ -5091,8 +5129,8 @@
       "type": "choice",
       "jitter_ms": 0,
       "options": {
-        "none": 40,
-        "jump": 40,
+        "none": 50,
+        "jump": 30,
         "slide": 20
       },
       "safe_zone_id": "zone_008",
@@ -5106,8 +5144,8 @@
       "type": "choice",
       "jitter_ms": 0,
       "options": {
-        "none": 40,
-        "jump": 40,
+        "none": 50,
+        "jump": 30,
         "slide": 20
       },
       "safe_zone_id": "zone_008",
@@ -5121,8 +5159,8 @@
       "type": "choice",
       "jitter_ms": 0,
       "options": {
-        "none": 40,
-        "jump": 40,
+        "none": 50,
+        "jump": 30,
         "slide": 20
       },
       "safe_zone_id": "zone_008",
@@ -5136,8 +5174,8 @@
       "type": "choice",
       "jitter_ms": 0,
       "options": {
-        "none": 40,
-        "jump": 40,
+        "none": 50,
+        "jump": 30,
         "slide": 20
       },
       "safe_zone_id": "zone_008",
@@ -5151,8 +5189,8 @@
       "type": "choice",
       "jitter_ms": 0,
       "options": {
-        "none": 40,
-        "jump": 40,
+        "none": 50,
+        "jump": 30,
         "slide": 20
       },
       "safe_zone_id": "zone_008",
@@ -5601,8 +5639,8 @@
       "type": "choice",
       "jitter_ms": 0,
       "options": {
-        "none": 40,
-        "jump": 40,
+        "none": 50,
+        "jump": 30,
         "slide": 20
       },
       "safe_zone_id": "zone_006",
@@ -5616,8 +5654,8 @@
       "type": "choice",
       "jitter_ms": 0,
       "options": {
-        "none": 40,
-        "jump": 40,
+        "none": 50,
+        "jump": 30,
         "slide": 20
       },
       "safe_zone_id": "zone_006",
@@ -5631,8 +5669,8 @@
       "type": "choice",
       "jitter_ms": 0,
       "options": {
-        "none": 40,
-        "jump": 40,
+        "none": 50,
+        "jump": 30,
         "slide": 20
       },
       "safe_zone_id": "zone_006",
@@ -5646,8 +5684,8 @@
       "type": "choice",
       "jitter_ms": 0,
       "options": {
-        "none": 40,
-        "jump": 40,
+        "none": 50,
+        "jump": 30,
         "slide": 20
       },
       "safe_zone_id": "zone_007",
@@ -5661,8 +5699,8 @@
       "type": "choice",
       "jitter_ms": 0,
       "options": {
-        "none": 40,
-        "jump": 40,
+        "none": 50,
+        "jump": 30,
         "slide": 20
       },
       "safe_zone_id": "zone_007",
@@ -5676,8 +5714,8 @@
       "type": "choice",
       "jitter_ms": 0,
       "options": {
-        "none": 40,
-        "jump": 40,
+        "none": 50,
+        "jump": 30,
         "slide": 20
       },
       "safe_zone_id": "zone_007",
@@ -5691,8 +5729,8 @@
       "type": "choice",
       "jitter_ms": 0,
       "options": {
-        "none": 40,
-        "jump": 40,
+        "none": 50,
+        "jump": 30,
         "slide": 20
       },
       "safe_zone_id": "zone_007",
@@ -5706,8 +5744,8 @@
       "type": "choice",
       "jitter_ms": 0,
       "options": {
-        "none": 40,
-        "jump": 40,
+        "none": 50,
+        "jump": 30,
         "slide": 20
       },
       "safe_zone_id": "zone_007",
@@ -5721,8 +5759,8 @@
       "type": "choice",
       "jitter_ms": 0,
       "options": {
-        "none": 40,
-        "jump": 40,
+        "none": 50,
+        "jump": 30,
         "slide": 20
       },
       "safe_zone_id": "zone_007",
@@ -5736,8 +5774,8 @@
       "type": "choice",
       "jitter_ms": 0,
       "options": {
-        "none": 40,
-        "jump": 40,
+        "none": 50,
+        "jump": 30,
         "slide": 20
       },
       "safe_zone_id": "zone_007",
@@ -5751,8 +5789,8 @@
       "type": "choice",
       "jitter_ms": 0,
       "options": {
-        "none": 40,
-        "jump": 40,
+        "none": 50,
+        "jump": 30,
         "slide": 20
       },
       "safe_zone_id": "zone_007",
@@ -5769,19 +5807,19 @@
     {
       "id": "zone_หลังspeed",
       "start": 20.671,
-      "end": 30.614,
+      "end": 30.0,
       "label": "เลือกจาก Timeline 20.671–26.614s"
     },
     {
       "id": "zone_003",
       "start": 50.571,
-      "end": 52.3,
+      "end": 53.212124,
       "label": "เลือกจาก Timeline 50.571–52.300s"
     },
     {
       "id": "zone_bonus",
       "start": 71.529,
-      "end": 77.614,
+      "end": 78.125488,
       "label": "เลือกจาก Timeline 71.529–77.614s"
     },
     {
@@ -5799,13 +5837,13 @@
     {
       "id": "zone_009",
       "start": 107.386,
-      "end": 110.4,
+      "end": 111.064144,
       "label": "เลือกจาก Timeline 107.386–110.400s"
     },
     {
       "id": "zone_010",
       "start": 112.029,
-      "end": 115.214,
+      "end": 115.443,
       "label": "เลือกจาก Timeline 112.029–115.214s"
     },
     {
@@ -5817,31 +5855,31 @@
     {
       "id": "zone_005",
       "start": 178.414,
-      "end": 181.129,
+      "end": 181.329,
       "label": "เลือกจาก Timeline 178.414–181.129s"
     },
     {
       "id": "zone_002",
       "start": 187.157,
-      "end": 189.429,
+      "end": 189.229,
       "label": "เลือกจาก Timeline 187.157–189.429s"
     },
     {
       "id": "zone_008",
       "start": 258.543,
-      "end": 260.386,
+      "end": 260.743,
       "label": "เลือกจาก Timeline 258.543–260.386s"
     },
     {
       "id": "zone_006",
       "start": 283.957,
-      "end": 285.471,
+      "end": 286.043,
       "label": "เลือกจาก Timeline 283.957–285.471s"
     },
     {
       "id": "zone_007",
       "start": 290.614,
-      "end": 294.786,
+      "end": 295.871,
       "label": "เลือกจาก Timeline 290.614–294.786s"
     }
   ],

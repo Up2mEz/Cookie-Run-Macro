@@ -1,7 +1,7 @@
 import time
 import unittest
 
-from recorder import Recorder
+from recorder import Recorder, prepare_recording_candidate
 from state import StateMachine
 
 
@@ -17,7 +17,7 @@ class _Shell:
 
 
 class RecorderRapidTapTests(unittest.TestCase):
-    def test_recording_over_pattern_with_safe_zone_can_finish_and_remains_required(self):
+    def test_recording_over_pattern_with_safe_zone_converts_covered_event(self):
         recorder = Recorder(StateMachine())
         recorder.start({
             "name": "safe-base",
@@ -32,8 +32,46 @@ class RecorderRapidTapTests(unittest.TestCase):
         pattern, _warnings = recorder.finish()
 
         self.assertEqual(pattern["safe_zones"][0]["id"], "zone_001")
-        self.assertEqual(pattern["events"][0]["event_class"], "required")
-        self.assertEqual(pattern["events"][0]["action"], "jump")
+        self.assertEqual(pattern["events"][0]["event_class"], "safe_random")
+        self.assertEqual(pattern["events"][0]["safe_zone_id"], "zone_001")
+        self.assertEqual(pattern["events"][0]["options"], {"none": 40, "jump": 40, "slide": 20})
+
+    def test_new_recording_destination_starts_without_safe_zones(self):
+        recorder = Recorder(StateMachine())
+        recorder.start({
+            "name": "safe-base",
+            "events": [],
+            "safe_zones": [{"id": "zone_001", "start": 0.5, "end": 2.0, "label": "safe"}],
+        })
+        recorder.sync()
+        anchor = recorder._anchor
+        recorder.key_down("j", now=anchor + 1.0, send_input=False)
+        recorder.key_up("j", now=anchor + 1.05)
+        recorded, _ = recorder.finish()
+
+        candidate, _ = prepare_recording_candidate(recorded, "fresh-take", new_pattern=True)
+
+        self.assertEqual(candidate["name"], "fresh-take")
+        self.assertEqual(candidate["safe_zones"], [])
+        self.assertEqual(candidate["events"][0]["event_class"], "required")
+        self.assertEqual(candidate["events"][0]["action"], "jump")
+        self.assertEqual(recorded["safe_zones"][0]["id"], "zone_001")
+
+    def test_overwrite_recording_destination_keeps_safe_zones(self):
+        recorded = {
+            "name": "safe-base",
+            "events": [{
+                "id": "evt_0001", "at": 1.0, "phase": "synced",
+                "event_class": "required", "type": "action", "action": "jump",
+            }],
+            "safe_zones": [{"id": "zone_001", "start": 0.5, "end": 2.0, "label": "safe"}],
+        }
+
+        candidate, _ = prepare_recording_candidate(recorded, "existing", new_pattern=False)
+
+        self.assertEqual(candidate["name"], "existing")
+        self.assertEqual(candidate["safe_zones"][0]["id"], "zone_001")
+        self.assertEqual(candidate["events"][0]["event_class"], "safe_random")
 
     def test_sync_can_backdate_anchor_to_first_matching_frame(self):
         recorder = Recorder(StateMachine())

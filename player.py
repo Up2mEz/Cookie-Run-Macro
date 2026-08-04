@@ -7,8 +7,10 @@ from copy import deepcopy
 from dataclasses import dataclass
 from typing import Callable
 
+from PIL import Image, ImageChops, ImageStat
+
 from adb_manager import ADBError, ADBManager, PersistentShell
-from event_model import normalize_pattern
+from event_model import ADAPTIVE_WAIT_TYPE, normalize_pattern
 from state import AppState, StateMachine
 from sync_detector import stable_sync_target
 
@@ -22,6 +24,41 @@ class ScheduledAction:
     x: int | None = None
     y: int | None = None
     phase: str = "synced"
+    event_type: str = "action"
+    adaptive: dict | None = None
+
+
+def choose_pre_sync_delay_ms(
+    playback: dict, history: list[int], rng: random.Random | None = None,
+) -> int:
+    """Select a per-round delay, excluding values too close to recent rounds."""
+    if str(playback.get("pre_sync_delay_mode", "fixed")).lower() != "random":
+        return max(0, int(playback.get("pre_sync_extra_ms", 0)))
+    low = max(0, int(playback.get("pre_sync_random_min_ms", 0)))
+    high = max(low, int(playback.get("pre_sync_random_max_ms", low)))
+    min_delta = max(0, int(playback.get("pre_sync_random_min_delta_ms", 50)))
+    history_size = max(1, int(playback.get("pre_sync_random_history", 3)))
+    recent = [int(value) for value in history[-history_size:]]
+    random_source = rng or random.Random()
+    if low == high:
+        return low
+    if not min_delta:
+        return random_source.randint(low, high)
+    # A spaced bag prevents arbitrary early draws from covering the entire
+    # range later. With 300–500 / 50 ms this produces
+    # 300,350,400,450,500 in shuffled order and never 300 -> 310.
+    candidates = list(range(low, high + 1, min_delta))
+    if candidates[-1] != high and high - candidates[-1] >= min_delta:
+        candidates.append(high)
+    available = [
+        value for value in candidates
+        if all(abs(value - previous) >= min_delta for previous in recent)
+    ]
+    if not available:
+        raise ValueError(
+            "ช่วง Random ก่อน Sync แคบเกินกว่าจะรักษาระยะห่างจากค่าที่ยังจำอยู่"
+        )
+    return random_source.choice(available)
 
 
 def prepare_round_events(pattern: dict, rng: random.Random | None = None) -> list[ScheduledAction]:
@@ -56,6 +93,15 @@ def prepare_round_events(pattern: dict, rng: random.Random | None = None) -> lis
                     int(event["x"]) if "x" in event else None,
                     int(event["y"]) if "y" in event else None,
                     str(event.get("phase", "synced")),
+                    str(event.get("type", "action")),
+                    ({
+                        key: event[key]
+                        for key in (
+                            "detect_x", "detect_y", "detect_radius", "change_threshold",
+                            "stable_frames", "poll_ms", "arm_delay_ms", "success_delay_ms",
+                            "timeout_seconds",
+                        )
+                    } if event.get("type") == ADAPTIVE_WAIT_TYPE else None),
                 )
             )
     return sorted(scheduled, key=lambda item: (item.at, item.source_id))
@@ -91,9 +137,10 @@ class Player:
         event_total: int = 0,
         round_number: int = 1,
         round_total: int = 1,
+        pre_sync_delay_ms: int | None = None,
     ) -> None:
         if self.on_progress:
-            self.on_progress({
+            snapshot = {
                 "phase": phase,
                 "elapsed": max(0.0, float(elapsed)),
                 "duration": max(0.0, float(duration)),
@@ -102,7 +149,10 @@ class Player:
                 "round_number": max(1, int(round_number)),
                 "round_total": max(0, int(round_total)),
                 "reported_at": time.perf_counter(),
-            })
+            }
+            if pre_sync_delay_ms is not None:
+                snapshot["pre_sync_delay_ms"] = max(0, int(pre_sync_delay_ms))
+            self.on_progress(snapshot)
 
     def _wait_on_timeline(
         self,
@@ -165,6 +215,71 @@ class Player:
             return f"input swipe {x} {y} {x} {y} {duration}"
         return f"input tap {x} {y}"
 
+    @staticmethod
+    def _adaptive_patch(image: Image.Image, settings: dict) -> Image.Image:
+        x, y = int(settings["detect_x"]), int(settings["detect_y"])
+        radius = int(settings["detect_radius"])
+        left, top = max(0, x - radius), max(0, y - radius)
+        right, bottom = min(image.width, x + radius + 1), min(image.height, y + radius + 1)
+        if left >= right or top >= bottom or not (0 <= x < image.width and 0 <= y < image.height):
+            raise ValueError(
+                f"จุดตรวจ Stop ({x},{y}) อยู่นอกภาพ MuMu {image.width}×{image.height}"
+            )
+        return image.convert("RGB").crop((left, top, right, bottom))
+
+    @staticmethod
+    def _adaptive_change_score(reference: Image.Image, current: Image.Image) -> float:
+        if current.size != reference.size:
+            current = current.resize(reference.size)
+        means = ImageStat.Stat(ImageChops.difference(reference, current)).mean
+        return sum(means) / (len(means) * 255.0)
+
+    def _wait_for_adaptive_release(
+        self,
+        action: ScheduledAction,
+        serial: str,
+        *,
+        round_number: int,
+        round_total: int,
+        event_index: int,
+        event_total: int,
+    ) -> bool:
+        settings = action.adaptive or {}
+        if self.stop_event.wait(int(settings.get("arm_delay_ms", 500)) / 1000):
+            return False
+        reference_image, _source = self.adb.capture_image(serial)
+        reference = self._adaptive_patch(reference_image, settings)
+        threshold = float(settings.get("change_threshold", 0.12))
+        required_stable = int(settings.get("stable_frames", 2))
+        poll_seconds = int(settings.get("poll_ms", 250)) / 1000
+        timeout_seconds = int(settings.get("timeout_seconds", 0))
+        started = time.perf_counter()
+        stable = 0
+        while not self.stop_event.is_set():
+            elapsed = time.perf_counter() - started
+            self._emit_progress(
+                "waiting_pre_sync_condition", elapsed=elapsed, duration=float(timeout_seconds),
+                event_index=event_index - 1, event_total=event_total,
+                round_number=round_number, round_total=round_total,
+            )
+            if timeout_seconds and elapsed >= timeout_seconds:
+                raise TimeoutError(
+                    "รอสุ่มทักษะเกินเวลาที่กำหนด — ยังไม่กด Play เพื่อความปลอดภัย"
+                )
+            if self.stop_event.wait(poll_seconds):
+                return False
+            current_image, _source = self.adb.capture_image(serial)
+            current = self._adaptive_patch(current_image, settings)
+            score = self._adaptive_change_score(reference, current)
+            stable = stable + 1 if score >= threshold else 0
+            if stable >= required_stable:
+                break
+        if self.stop_event.is_set():
+            return False
+        if self.stop_event.wait(int(settings.get("success_delay_ms", 250)) / 1000):
+            return False
+        return True
+
     def play(
         self,
         pattern: dict,
@@ -174,7 +289,7 @@ class Player:
         loop_interval_ms: int = 0,
         sync_each_loop: bool = True,
         sync_waiter: Callable[[threading.Event, threading.Event, threading.Event], bool | float] | None = None,
-        result_waiter: Callable[[threading.Event, threading.Event, float], bool] | None = None,
+        result_waiter: Callable[[threading.Event, threading.Event, threading.Event, float], bool] | None = None,
     ) -> None:
         normalized, _ = normalize_pattern(pattern)
         if not normalized["events"]:
@@ -193,6 +308,8 @@ class Player:
             round_number = 1
             first_sync_complete = False
             result_failed = False
+            pre_sync_delay_history: list[int] = []
+            delay_rng = random.Random()
             while loop_forever or round_number <= repeat_count:
                 if self.stop_event.is_set():
                     break
@@ -206,16 +323,28 @@ class Player:
                 post_actions = [action for action in all_actions if action.phase == "post_game"]
                 displayed_round_total = 0 if loop_forever else repeat_count
                 needs_sync = not first_sync_complete or sync_each_loop
-                pre_sync_extra = (
-                    int(normalized.get("playback", {}).get("pre_sync_extra_ms", 0)) / 1000
-                    if needs_sync else 0.0
+                selected_pre_sync_delay_ms = (
+                    choose_pre_sync_delay_ms(normalized.get("playback", {}), pre_sync_delay_history, delay_rng)
+                    if needs_sync else 0
                 )
+                if needs_sync:
+                    pre_sync_delay_history.append(selected_pre_sync_delay_ms)
+                pre_sync_extra = selected_pre_sync_delay_ms / 1000
                 if pre_actions or pre_sync_extra:
                     self.state.transition(AppState.PLAYING, force=True)
                     pre_start = time.perf_counter()
                     pre_event_duration = max((action.at + action.duration_ms / 1000 for action in pre_actions), default=0.0)
                     pre_duration = pre_event_duration + pre_sync_extra
+                    self._emit_progress(
+                        "pre_sync", duration=pre_duration,
+                        round_number=round_number, round_total=displayed_round_total,
+                        pre_sync_delay_ms=selected_pre_sync_delay_ms,
+                    )
+                    skipped_pre_ids: set[str] = set()
+                    adaptive_completed_at: float | None = None
                     for event_index, action in enumerate(pre_actions, start=1):
+                        if action.source_id in skipped_pre_ids:
+                            continue
                         if not self._wait_on_timeline(
                             pre_start, action.at, phase="pre_sync", duration=pre_duration,
                             event_index=event_index - 1, event_total=len(pre_actions),
@@ -224,9 +353,29 @@ class Player:
                             break
                         if self.stop_event.is_set():
                             break
-                        if not self._shell:
-                            raise ADBError("Persistent ADB shell ไม่พร้อมใช้งาน")
-                        self._shell.send(self._command(action, normalized["controls"]))
+                        if action.event_type == ADAPTIVE_WAIT_TYPE:
+                            final_play = pre_actions[-1]
+                            if not self._wait_for_adaptive_release(
+                                action, serial, round_number=round_number,
+                                round_total=displayed_round_total, event_index=event_index,
+                                event_total=len(pre_actions),
+                            ):
+                                break
+                            if not self._shell:
+                                raise ADBError("Persistent ADB shell ไม่พร้อมใช้งาน")
+                            self._shell.send(self._command(final_play, normalized["controls"]))
+                            skipped_pre_ids.add(final_play.source_id)
+                            adaptive_completed_at = time.perf_counter()
+                            self._emit_progress(
+                                "pre_sync", elapsed=final_play.at, duration=pre_duration,
+                                event_index=len(pre_actions), event_total=len(pre_actions),
+                                round_number=round_number, round_total=displayed_round_total,
+                            )
+                            continue
+                        else:
+                            if not self._shell:
+                                raise ADBError("Persistent ADB shell ไม่พร้อมใช้งาน")
+                            self._shell.send(self._command(action, normalized["controls"]))
                         self._emit_progress(
                             "pre_sync", elapsed=action.at, duration=pre_duration,
                             event_index=event_index, event_total=len(pre_actions),
@@ -234,12 +383,19 @@ class Player:
                         )
                     if self.stop_event.is_set():
                         break
-                    if not self._wait_on_timeline(
-                        pre_start, pre_duration, phase="pre_sync", duration=pre_duration,
-                        event_index=len(pre_actions), event_total=len(pre_actions),
-                        round_number=round_number, round_total=displayed_round_total,
-                    ):
-                        break
+                    if adaptive_completed_at is not None:
+                        if pre_sync_extra and not self._wait_on_timeline(
+                            adaptive_completed_at, pre_sync_extra, phase="pre_sync", duration=pre_sync_extra,
+                            event_index=len(pre_actions), event_total=len(pre_actions),
+                            round_number=round_number, round_total=displayed_round_total,
+                        ):
+                            break
+                    elif not self._wait_on_timeline(
+                            pre_start, pre_duration, phase="pre_sync", duration=pre_duration,
+                            event_index=len(pre_actions), event_total=len(pre_actions),
+                            round_number=round_number, round_total=displayed_round_total,
+                        ):
+                            break
                 synced = True
                 sync_anchor: float | None = None
                 if needs_sync:
@@ -271,6 +427,7 @@ class Player:
                 self.state.transition(AppState.PLAYING, force=True)
                 synced_duration = max((action.at + action.duration_ms / 1000 for action in synced_actions), default=0.0)
                 result_detected = threading.Event()
+                gameplay_end_detected = threading.Event()
                 result_watch_done = threading.Event()
                 result_watch_cancel = threading.Event()
                 result_detected_at: list[float] = []
@@ -279,8 +436,11 @@ class Player:
                 if post_game_enabled:
                     def watch_result() -> None:
                         try:
-                            if result_waiter and result_waiter(self.stop_event, result_watch_cancel, synced_duration):
+                            if result_waiter and result_waiter(
+                                self.stop_event, result_watch_cancel, gameplay_end_detected, synced_duration,
+                            ):
                                 result_detected_at.append(time.perf_counter())
+                                gameplay_end_detected.set()
                                 result_detected.set()
                         finally:
                             result_watch_done.set()
@@ -292,10 +452,10 @@ class Player:
                         round_start, action.at, phase="synced", duration=synced_duration,
                         event_index=event_index - 1, event_total=len(synced_actions),
                         round_number=round_number, round_total=displayed_round_total,
-                        interrupt_event=result_detected,
+                        interrupt_event=gameplay_end_detected,
                     ):
                         break
-                    if self.stop_event.is_set() or result_detected.is_set():
+                    if self.stop_event.is_set() or gameplay_end_detected.is_set():
                         break
                     if not self._shell:
                         raise ADBError("Persistent ADB shell ไม่พร้อมใช้งาน")
@@ -308,12 +468,12 @@ class Player:
                 if self.stop_event.is_set():
                     result_watch_cancel.set()
                     break
-                if not result_detected.is_set():
+                if not gameplay_end_detected.is_set():
                     timeline_finished = self._wait_on_timeline(
                         round_start, synced_duration, phase="synced", duration=synced_duration,
                         event_index=len(synced_actions), event_total=len(synced_actions),
                         round_number=round_number, round_total=displayed_round_total,
-                        interrupt_event=result_detected,
+                        interrupt_event=gameplay_end_detected,
                     )
                     if not timeline_finished and self.stop_event.is_set():
                         result_watch_cancel.set()
