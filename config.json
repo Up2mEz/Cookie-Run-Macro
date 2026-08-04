@@ -1,7 +1,6 @@
 {
   "adb_path": "",
   "candidate_ports": [
-    5557,
     16416
   ],
   "selected_serial": "",

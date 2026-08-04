@@ -9,7 +9,7 @@ from typing import Any
 
 DEFAULT_CONFIG: dict[str, Any] = {
     "adb_path": "",
-    "candidate_ports": [5557, 16416],
+    "candidate_ports": [16416],
     "selected_serial": "",
     "last_pattern": "",
     "expected_resolution": {"width": 1280, "height": 720},

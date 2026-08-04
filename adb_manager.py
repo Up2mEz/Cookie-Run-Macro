@@ -14,7 +14,7 @@ from typing import Callable, Iterable, Sequence
 from PIL import Image, UnidentifiedImageError
 
 
-DEFAULT_MUMU_PORT_CANDIDATES = [5557, 16416]
+DEFAULT_MUMU_PORT_CANDIDATES = [16416]
 COMMON_MUMU_ROOTS = [
     Path(r"C:\Program Files\Netease"),
     Path(r"C:\Program Files (x86)\Netease"),
@@ -348,11 +348,29 @@ class ADBManager:
                 pass
         return DeviceInfo(serial, "device", model, product, True, width, height)
 
-    def discover_devices(self, ports: Iterable[int] = DEFAULT_MUMU_PORT_CANDIDATES) -> list[DeviceInfo]:
-        self.connect_candidate_ports(ports)
+    def discover_devices(
+        self,
+        ports: Iterable[int] = DEFAULT_MUMU_PORT_CANDIDATES,
+        *,
+        target_serial: str | None = None,
+    ) -> list[DeviceInfo]:
+        """Discover only the requested MuMu port/device.
+
+        The ADB daemon is shared, so ``adb devices`` may list other emulator
+        windows that were connected earlier. Restricting the result to the
+        requested host:port prevents a second MuMu window from being selected
+        accidentally.
+        """
+        normalized_ports = list(dict.fromkeys(int(port) for port in ports))
+        self.connect_candidate_ports(normalized_ports)
         output = self.devices_output()
         devices: list[DeviceInfo] = []
+        allowed_serials = {target_serial} if target_serial else {
+            f"127.0.0.1:{port}" for port in normalized_ports
+        }
         for serial in parse_adb_devices(output):
+            if serial not in allowed_serials:
+                continue
             try:
                 devices.append(self.probe_device(serial, output))
             except ADBError:

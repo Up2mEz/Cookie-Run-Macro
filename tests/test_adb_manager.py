@@ -1,7 +1,7 @@
 import unittest
 import struct
 
-from adb_manager import ADBManager, ADBError, parse_adb_devices, parse_wm_size
+from adb_manager import ADBManager, ADBError, DeviceInfo, parse_adb_devices, parse_wm_size
 
 
 class ParseAdbDevicesTests(unittest.TestCase):
@@ -31,6 +31,40 @@ List of devices attached
 
     def test_override_wm_size_wins(self):
         self.assertEqual(parse_wm_size("Physical size: 1600x900\nOverride size: 1280x720"), (1280, 720))
+
+    def test_discover_devices_limits_results_to_requested_port(self):
+        manager = ADBManager("adb.exe")
+        connected_ports = []
+        manager.connect_candidate_ports = lambda ports: connected_ports.extend(ports)
+        manager.devices_output = lambda: (
+            "List of devices attached\n"
+            "127.0.0.1:5557 device model:Other\n"
+            "127.0.0.1:16416 device model:Target\n"
+        )
+        manager.probe_device = lambda serial, _output=None: DeviceInfo(
+            serial, "device", "MuMu", "", True, 1280, 720
+        )
+
+        devices = manager.discover_devices([16416])
+
+        self.assertEqual(connected_ports, [16416])
+        self.assertEqual([device.serial for device in devices], ["127.0.0.1:16416"])
+
+    def test_discover_devices_can_lock_to_saved_serial(self):
+        manager = ADBManager("adb.exe")
+        manager.connect_candidate_ports = lambda _ports: None
+        manager.devices_output = lambda: (
+            "List of devices attached\n"
+            "127.0.0.1:5557 device model:Other\n"
+            "127.0.0.1:16416 device model:Target\n"
+        )
+        manager.probe_device = lambda serial, _output=None: DeviceInfo(
+            serial, "device", "MuMu", "", True, 1280, 720
+        )
+
+        devices = manager.discover_devices([5557], target_serial="127.0.0.1:16416")
+
+        self.assertEqual([device.serial for device in devices], ["127.0.0.1:16416"])
 
     def test_decode_raw_screencap_with_16_byte_header(self):
         pixels = bytes((255, 0, 0, 255, 0, 255, 0, 255))

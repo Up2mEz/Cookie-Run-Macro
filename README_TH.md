@@ -21,7 +21,7 @@ Required Jump/Slide ที่ถูก Safe Zone ครอบจะเปลี�
 ค่าตั้งต้นของเครื่องนี้:
 
 - MuMu instance: `#1` / `Android Device-1`
-- Candidate ports: `5557,16416` (โปรแกรมจะลองทั้งสองพอร์ต)
+- ADB port: `16416` (โปรแกรมใช้ทีละ port เดียว)
 - ความละเอียดเป้าหมาย: `1280×720`
 - พิกัดจากภาพเกม: Jump `160,635`, Slide `1115,635`
 - Pause ROI จากภาพ: `x=1165, y=5, width=62, height=62`
@@ -274,7 +274,7 @@ HUD ระหว่างเล่นอัปเดตทุกประมา�
 ## แก้ปัญหาเบื้องต้น
 
 - **ไม่พบ ADB:** ใช้ Browse เลือก ADB ของ MuMu โดยตรง ห้ามเลือกไฟล์ที่เรียก `adb devices` ไม่ได้
-- **ไม่พบ Device:** ตรวจว่า MuMu เปิดอยู่, ADB เปิดอยู่ และพอร์ตตรงกับหน้า Settings
+- **ไม่พบ Device:** ตรวจว่า MuMu เปิดอยู่, ADB เปิดอยู่ และ ADB port/serial ที่ตั้งไว้ตรงกับ instance ที่ต้องการใช้ โปรแกรมจะไม่สลับไปใช้หน้าต่างอื่น
 - **Device offline/unauthorized:** restart MuMu/ADB แล้วค้นหาใหม่ โปรแกรมจะไม่เลือก device นี้เอง
 - **Resolution ไม่ตรง:** อย่าฝืนใช้แบบเงียบ ๆ ให้ยกเลิก ปรับพิกัด และ Capture template ใหม่
 - **Template หาย/ROI เกินภาพ:** เปิดด่านแล้ว Capture Pause Template ใหม่

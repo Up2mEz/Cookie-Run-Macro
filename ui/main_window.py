@@ -137,7 +137,7 @@ class MainWindow:
 
     def _create_variables(self) -> None:
         self.adb_var = tk.StringVar(value=str(self.config.data.get("adb_path", "")))
-        self.ports_var = tk.StringVar(value=",".join(map(str, self.config.data.get("candidate_ports", [5557, 16416]))))
+        self.ports_var = tk.StringVar(value=",".join(map(str, self.config.data.get("candidate_ports", [16416]))))
         self.device_var = tk.StringVar(value=str(self.config.data.get("selected_serial", "")))
         self.device_detail_var = tk.StringVar(value="ยังไม่ได้ทดสอบอุปกรณ์")
         self.pattern_var = tk.StringVar()
@@ -333,9 +333,9 @@ class MainWindow:
         self.adb_combo.grid(row=1, column=1, sticky="ew", pady=5)
         ttk.Button(tab, text="ค้นหา ADB อัตโนมัติ", command=self._detect_adb).grid(row=1, column=2, padx=6)
         ttk.Button(tab, text="Browse…", command=self._browse_adb).grid(row=1, column=3)
-        ttk.Label(tab, text="Candidate ports").grid(row=2, column=0, sticky="w", pady=5)
+        ttk.Label(tab, text="ADB port (ใช้ 1 ค่า)").grid(row=2, column=0, sticky="w", pady=5)
         ttk.Entry(tab, textvariable=self.ports_var).grid(row=2, column=1, sticky="ew", pady=5)
-        ttk.Label(tab, text="คั่นด้วย comma เช่น 5557,16416", style="Hint.TLabel").grid(row=2, column=2, columnspan=2, sticky="w")
+        ttk.Label(tab, text="เช่น 16416 — ไม่สแกนหลาย port", style="Hint.TLabel").grid(row=2, column=2, columnspan=2, sticky="w")
         ttk.Label(tab, text="MuMu serial").grid(row=3, column=0, sticky="w", pady=5)
         self.device_combo = ttk.Combobox(tab, textvariable=self.device_var)
         self.device_combo.grid(row=3, column=1, sticky="ew", pady=5)
@@ -715,9 +715,11 @@ class MainWindow:
         try:
             ports = [int(value.strip()) for value in self.ports_var.get().split(",") if value.strip()]
         except ValueError as exc:
-            raise ValueError("Candidate ports ต้องเป็นตัวเลขและคั่นด้วย comma") from exc
+            raise ValueError("ADB port ต้องเป็นตัวเลข") from exc
         if not ports or any(not 1 <= port <= 65535 for port in ports):
             raise ValueError("กรุณาใส่ port 1–65535 อย่างน้อยหนึ่งค่า")
+        if len(ports) != 1:
+            raise ValueError("โปรแกรมล็อกให้ใช้ ADB port เดียวเท่านั้น เช่น 16416")
         return list(dict.fromkeys(ports))
 
     def _quick_connect(self) -> None:
@@ -727,10 +729,13 @@ class MainWindow:
             self._show_error(str(exc))
             return
         self.state.transition(AppState.DISCOVERING_ADB, force=True)
-        self.quick_connection_var.set("… กำลังค้นหา ADB และทดลองพอร์ต 5557/16416")
+        port = ports[0]
+        target_serial = self.device_var.get().strip() or f"127.0.0.1:{port}"
+        self.quick_connection_var.set(f"… กำลังใช้ ADB port {port} กับ device {target_serial}")
 
         def work() -> tuple[str, ADBManager, list[DeviceInfo]]:
-            candidates = discover_adb_paths(self.adb_var.get().strip())
+            configured_adb = self.adb_var.get().strip()
+            candidates = [Path(configured_adb)] if configured_adb else discover_adb_paths()
             if not candidates:
                 raise ADBError("ไม่พบ ADB อัตโนมัติ กด ‘หาไม่เจอ? เลือก ADB เอง’ แล้ว Browse ไปที่ adb.exe ของ MuMu")
             usable_adb = False
@@ -742,7 +747,7 @@ class MainWindow:
                     continue
                 usable_adb = True
                 try:
-                    devices = manager.discover_devices(ports)
+                    devices = manager.discover_devices([port], target_serial=target_serial)
                 except ADBError as exc:
                     last_error = str(exc)
                     continue
@@ -818,15 +823,19 @@ class MainWindow:
         try:
             ports = self._parse_ports()
             adb = self._adb()
+            target_serial = self.device_var.get().strip() or f"127.0.0.1:{ports[0]}"
         except Exception as exc:
             self._show_error(str(exc))
             return
         self.state.transition(AppState.CONNECTING, force=True)
 
         def work() -> list[DeviceInfo]:
-            devices = adb.discover_devices(ports)
+            devices = adb.discover_devices(ports, target_serial=target_serial)
             if not devices:
-                raise ADBError("ไม่พบ MuMu device ที่ boot พร้อมใช้งาน ลองตรวจ ADB port ใน MuMu Settings")
+                raise ADBError(
+                    f"ไม่พบ device ที่กำหนด {target_serial} บน port {ports[0]} "
+                    "โปรแกรมไม่สลับไปใช้ MuMu หน้าต่างอื่นอัตโนมัติ"
+                )
             return devices
 
         def success(devices: list[DeviceInfo]) -> None:
@@ -836,10 +845,10 @@ class MainWindow:
                 self.device_var.set(devices[0].serial)
             self._show_device(self.devices[self.device_var.get()])
             self.state.transition(AppState.IDLE, force=True)
-            self.message_var.set(f"พบอุปกรณ์พร้อมใช้ {len(devices)} เครื่อง")
+            self.message_var.set(f"ล็อกการเชื่อมต่อไว้ที่ {self.device_var.get()} เท่านั้น")
             self._save_config()
 
-        self._background(work, success, f"กำลังทดลองพอร์ต {', '.join(map(str, ports))} และตรวจ boot/resolution…")
+        self._background(work, success, f"กำลังตรวจ device {target_serial} ผ่าน port {ports[0]}…")
 
     def _show_device(self, device: DeviceInfo) -> None:
         self.device_detail_var.set(
