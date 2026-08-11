@@ -1,5 +1,6 @@
 import threading
 import unittest
+from dataclasses import replace
 from unittest.mock import patch
 
 from PIL import Image, ImageDraw
@@ -72,6 +73,24 @@ class ChallengeTestButtonTests(unittest.TestCase):
         self.assertEqual(_SolvedChallenge.created.timing, timing)
         self.assertEqual(_SolvedChallenge.created.analysis.target_slots, (3, 5))
         self.assertEqual(statuses, ["ตรวจสอบแล้ว"])
+
+    def test_standalone_solver_allows_borderline_pair_for_guarded_consensus(self):
+        frame = _six_card_screen()
+        borderline = replace(
+            __import__("challenge_solver").analyze_card_grid(frame),
+            confident=False,
+            confidence_margin=1.59,
+        )
+        adb = _ADB(frame)
+        with (
+            patch("ui.main_window.analyze_card_grid", return_value=borderline),
+            patch("ui.main_window.CardChallengeSolver", _SolvedChallenge),
+        ):
+            result = MainWindow._solve_current_challenge(
+                adb, "127.0.0.1:16416", ChallengeTiming(), threading.Event(),
+            )
+        self.assertEqual(result[:2], (3, "six_cards"))
+        self.assertEqual(_SolvedChallenge.created.analysis.confidence_margin, 1.59)
 
     def test_no_challenge_never_constructs_solver_or_taps(self):
         adb = _ADB(Image.new("RGB", (1280, 720), "black"))

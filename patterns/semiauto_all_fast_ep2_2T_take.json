@@ -1,0 +1,236 @@
+{
+  "name": "semiauto_all_fast_ep2_2T_take",
+  "device": {
+    "preferred_serial": "127.0.0.1:16416",
+    "resolution": {
+      "width": 1280,
+      "height": 720
+    }
+  },
+  "controls": {
+    "jump": {
+      "x": 160,
+      "y": 635
+    },
+    "slide": {
+      "x": 1115,
+      "y": 635
+    }
+  },
+  "sync": {
+    "mode": "auto_pause_icon",
+    "profile_name": "ep1",
+    "template_path": "templates/pause_ep1.png",
+    "roi": {
+      "x": 1166,
+      "y": 5,
+      "width": 62,
+      "height": 62
+    },
+    "poll_ms": 20,
+    "threshold": 0.82,
+    "consecutive_matches": 2,
+    "timeout_seconds": 5,
+    "offset_ms": 0,
+    "manual_fallback": true
+  },
+  "post_game": {
+    "enabled": true,
+    "mode": "xp_result",
+    "template_path": "templates/default_result_xp_1280x720.png",
+    "roi": {
+      "x": 155,
+      "y": 450,
+      "width": 130,
+      "height": 75
+    },
+    "poll_ms": 700,
+    "threshold": 0.86,
+    "consecutive_matches": 3,
+    "min_gameplay_seconds": 15,
+    "timeout_seconds": 60,
+    "pause_absent_threshold": 0.8,
+    "challenge_enabled": true,
+    "challenge_first_click_delay_ms": 1000,
+    "challenge_inter_card_min_ms": 500,
+    "challenge_inter_card_max_ms": 900,
+    "challenge_next_round_min_ms": 1000,
+    "challenge_next_round_max_ms": 1800,
+    "challenge_transition_timeout_ms": 6500
+  },
+  "recording": {
+    "rapid_tap_to_hold": true,
+    "rapid_tap_gap_ms": 180
+  },
+  "playback": {
+    "repeat_count": 1,
+    "loop_forever": true,
+    "loop_interval_ms": 12000,
+    "pre_sync_extra_ms": 300,
+    "pre_sync_delay_mode": "fixed",
+    "pre_sync_random_min_ms": 300,
+    "pre_sync_random_max_ms": 500,
+    "pre_sync_random_min_delta_ms": 50,
+    "pre_sync_random_history": 3,
+    "sync_each_loop": true
+  },
+  "stats": {
+    "play_count": 138,
+    "last_played_at": "2026-08-11T09:26:33+07:00"
+  },
+  "events": [
+    {
+      "id": "evt_0007",
+      "at": 0.632637,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "tap",
+      "chance": 100,
+      "jitter_ms": 0,
+      "x": 645,
+      "y": 335
+    },
+    {
+      "id": "evt_0011",
+      "at": 1.245909,
+      "phase": "post_game",
+      "event_class": "required",
+      "type": "action",
+      "action": "tap",
+      "chance": 100,
+      "jitter_ms": 0,
+      "x": 526,
+      "y": 593
+    },
+    {
+      "id": "evt_0001",
+      "at": 1.317157,
+      "phase": "pre_sync",
+      "event_class": "required",
+      "type": "action",
+      "action": "slide",
+      "chance": 100,
+      "jitter_ms": 0,
+      "duration_ms": 101
+    },
+    {
+      "id": "evt_0012",
+      "at": 2.521864,
+      "phase": "post_game",
+      "event_class": "required",
+      "type": "action",
+      "action": "tap",
+      "chance": 100,
+      "jitter_ms": 0,
+      "x": 599,
+      "y": 614
+    },
+    {
+      "id": "evt_0002",
+      "at": 2.600917,
+      "phase": "pre_sync",
+      "event_class": "required",
+      "type": "action",
+      "action": "tap",
+      "chance": 100,
+      "jitter_ms": 0,
+      "x": 529,
+      "y": 618
+    },
+    {
+      "id": "evt_0003",
+      "at": 4.20786,
+      "phase": "pre_sync",
+      "event_class": "required",
+      "type": "action",
+      "action": "tap",
+      "chance": 100,
+      "jitter_ms": 0,
+      "x": 1093,
+      "y": 198
+    },
+    {
+      "id": "evt_0013",
+      "at": 4.655692,
+      "phase": "post_game",
+      "event_class": "required",
+      "type": "action",
+      "action": "tap",
+      "chance": 100,
+      "jitter_ms": 0,
+      "x": 599,
+      "y": 614
+    },
+    {
+      "id": "evt_0004",
+      "at": 5.495758,
+      "phase": "pre_sync",
+      "event_class": "required",
+      "type": "action",
+      "action": "tap",
+      "chance": 100,
+      "jitter_ms": 0,
+      "x": 648,
+      "y": 569
+    },
+    {
+      "id": "evt_0014",
+      "at": 5.745758,
+      "phase": "pre_sync",
+      "event_class": "required",
+      "type": "adaptive_wait",
+      "action": "tap",
+      "chance": 100,
+      "jitter_ms": 0,
+      "detect_x": 1040,
+      "detect_y": 672,
+      "detect_radius": 24,
+      "stable_frames": 2,
+      "poll_ms": 250,
+      "arm_delay_ms": 150,
+      "success_delay_ms": 250,
+      "timeout_seconds": 0,
+      "change_threshold": 0.12
+    },
+    {
+      "id": "evt_0006",
+      "at": 9.949017,
+      "phase": "pre_sync",
+      "event_class": "required",
+      "type": "action",
+      "action": "tap",
+      "chance": 100,
+      "jitter_ms": 0,
+      "x": 858,
+      "y": 625
+    },
+    {
+      "id": "evt_0009",
+      "at": 147.019943,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "jump",
+      "chance": 100,
+      "jitter_ms": 0
+    },
+    {
+      "id": "evt_0010",
+      "at": 155.373037,
+      "phase": "synced",
+      "event_class": "required",
+      "type": "action",
+      "action": "slide",
+      "duration_ms": 101,
+      "chance": 100,
+      "jitter_ms": 0
+    }
+  ],
+  "safe_zones": [],
+  "schema_version": 2,
+  "created_at": "2026-08-04T13:40:34+07:00",
+  "safety": {
+    "safe_random_min_gap_ms": 250
+  }
+}

@@ -89,6 +89,26 @@ class _NeverChangesADB(_FakeADB):
         return Image.new("RGB", (1280, 720), "#d8a331"), "test"
 
 
+class _FastRandomBoostADB(_FakeADB):
+    """Stop is visible briefly after the trigger, then Play is already back."""
+    def __init__(self):
+        super().__init__()
+        self.triggered_at = None
+        original_send = self.shell.send
+
+        def send(command):
+            original_send(command)
+            if self.triggered_at is None:
+                self.triggered_at = time.perf_counter()
+
+        self.shell.send = send
+
+    def capture_image(self, _serial):
+        since_trigger = time.perf_counter() - self.triggered_at if self.triggered_at is not None else 99
+        color = "#d8a331" if since_trigger < 0.08 else "#214d21"
+        return Image.new("RGB", (1280, 720), color), "test"
+
+
 class PlayerSchedulingTests(unittest.TestCase):
     def test_required_is_always_scheduled_without_jitter(self):
         pattern = {"name": "p", "events": [{"id": "r", "at": 2.35, "event_class": "required", "type": "action", "action": "jump", "chance": 1, "jitter_ms": 999}]}
@@ -203,6 +223,29 @@ class PlayerSchedulingTests(unittest.TestCase):
         self.assertEqual(adb.shell.commands, ["input tap 930 610"])
         self.assertEqual(len(sync_calls), 1)
         self.assertLess(time.perf_counter() - started, 1.0)
+
+    def test_adaptive_arms_after_random_trigger_before_fast_stop_disappears(self):
+        adb = _FastRandomBoostADB()
+        player = Player(adb, StateMachine())
+        sync_calls = []
+        pattern = {
+            "name": "fast-random-boost",
+            "events": [
+                {"id": "random", "phase": "pre_sync", "at": 0, "action": "tap", "x": 648, "y": 569},
+                {
+                    "id": "wait", "phase": "pre_sync", "at": 0.2, "type": "adaptive_wait",
+                    "detect_x": 1040, "detect_y": 672, "detect_radius": 8,
+                    "change_threshold": 0.1, "stable_frames": 2, "poll_ms": 80,
+                    "arm_delay_ms": 20, "success_delay_ms": 0, "timeout_seconds": 1,
+                },
+                {"id": "play", "phase": "pre_sync", "at": 1, "action": "tap", "x": 858, "y": 625},
+            ],
+        }
+
+        player.play(pattern, "serial", sync_waiter=lambda *_args: sync_calls.append(True) or True)
+
+        self.assertEqual(adb.shell.commands, ["input tap 648 569", "input tap 858 625"])
+        self.assertEqual(sync_calls, [True])
 
     def test_adaptive_wait_preserves_pre_sync_extra_and_loop_delay(self):
         adb = _AdaptiveFakeADB(rounds=2)
@@ -388,6 +431,27 @@ class PlayerSchedulingTests(unittest.TestCase):
         )
         self.assertEqual(adb.shell.commands, [])
         self.assertIn("result_timeout", {snapshot["phase"] for snapshot in snapshots})
+
+    def test_popup_cleanup_runs_between_rounds_but_not_after_final_round(self):
+        adb = _FakeADB()
+        calls = []
+        player = Player(adb, StateMachine())
+        pattern = {
+            "name": "popup-loop",
+            "events": [{"id": "jump", "phase": "synced", "at": 0, "action": "jump"}],
+        }
+
+        player.play(
+            pattern,
+            "serial",
+            repeat_count=2,
+            loop_interval_ms=1,
+            sync_waiter=lambda *_args: True,
+            popup_cleanup_waiter=lambda _stop, budget: calls.append(budget),
+        )
+
+        self.assertEqual(len(calls), 1)
+        self.assertGreater(calls[0], 0)
 
 
 if __name__ == "__main__":

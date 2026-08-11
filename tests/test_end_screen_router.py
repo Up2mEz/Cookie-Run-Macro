@@ -135,6 +135,39 @@ class EndScreenRouterTests(unittest.TestCase):
         self.assertTrue(_SolvedChallenge.last_analysis.confident)
         self.assertEqual(_SolvedChallenge.last_analysis.target_slots, strong.target_slots)
 
+    def test_router_accepts_three_stable_borderline_frames_without_strong_frame(self):
+        window = object.__new__(MainWindow)
+        window.root = _Root()
+        window.result_status_var = _Var()
+        window._result_similarity_callback = lambda *_args: None
+        detector = _Detector()
+        window._make_result_detector = lambda *_args, **_kwargs: detector
+        borderline = replace(
+            analyze_card_grid(_sliding_screen()),
+            confident=False,
+            confidence_margin=1.59,
+        )
+        pattern = {
+            "post_game": {
+                "challenge_enabled": True,
+                "min_gameplay_seconds": 0,
+                "timeout_seconds": 5,
+                "poll_ms": 400,
+            },
+        }
+        _SolvedChallenge.calls = 0
+        _SolvedChallenge.last_analysis = None
+        with (
+            patch("ui.main_window.analyze_card_grid", side_effect=(borderline, borderline, borderline)),
+            patch("ui.main_window.CardChallengeSolver", _SolvedChallenge),
+        ):
+            found = window._result_waiter(_ADB(_sliding_screen()), "serial", pattern)(
+                threading.Event(), threading.Event(), threading.Event(), 0,
+            )
+        self.assertTrue(found)
+        self.assertEqual(_SolvedChallenge.calls, 1)
+        self.assertEqual(_SolvedChallenge.last_analysis.confidence_margin, 1.59)
+
 
 if __name__ == "__main__":
     unittest.main()

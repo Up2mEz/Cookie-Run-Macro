@@ -26,6 +26,11 @@ CARD_INTERIORS = (
 CARD_CENTERS = tuple(((left + right) // 2, (top + bottom) // 2) for left, top, right, bottom in CARD_INTERIORS)
 ROUND_MARKER_ROI = (395, 112, 675, 170)
 SIX_CARD_MIN_MARGIN = 1.8
+# A single animated frame still needs the stronger margin above.  A lower
+# margin is only actionable when the exact same pair survives three separate
+# captures; this keeps animation blur from making a valid 4+2 layout fail
+# outright without turning one noisy frame into a click.
+SIX_CARD_CONSENSUS_MIN_MARGIN = 1.0
 FIVE_CARD_MIN_SCORE = 8.0
 FIVE_CARD_MIN_MARGIN = 1.0
 
@@ -152,6 +157,13 @@ def _card_grid_confident(kind: str, selected_floor: float, margin: float) -> boo
     return selected_floor >= FIVE_CARD_MIN_SCORE and margin >= FIVE_CARD_MIN_MARGIN
 
 
+def card_grid_actionable(analysis: CardGridAnalysis) -> bool:
+    """Return whether an analysis may enter guarded multi-frame consensus."""
+    if analysis.kind == "six_cards":
+        return analysis.confidence_margin >= SIX_CARD_CONSENSUS_MIN_MARGIN
+    return analysis.confident
+
+
 def _six_card_clusters(cards: list[Image.Image]) -> tuple[tuple[int, int], float]:
     distances = {
         (first, second): _image_distance(cards[first], cards[second])
@@ -186,7 +198,7 @@ def analyze_card_grid(image: Image.Image) -> CardGridAnalysis | None:
         # Both "sliding" and "jumping" titles can use this 6-card / 2-target
         # layout. Real animated characters can yield only ~2 margin even when
         # the same two slots remain stable. The relaxed per-frame gate is still
-        # protected by two-frame target consensus before every tap.
+        # protected by three-image target consensus before every tap.
         kind, target_count = "six_cards", 2
     elif present_slots == (0, 1, 3, 4, 5):
         kind, target_count = "five_cards", 1
@@ -265,10 +277,11 @@ class CardChallengeSolver:
     ) -> CardGridAnalysis | None:
         candidate_key = (seed.kind, seed.target_slots) if seed is not None else None
         stable_observations = 1 if seed is not None else 0
-        confident_anchor = seed if seed is not None and seed.confident else None
-        # At least one observation must pass the 1.8 margin gate, while three
-        # total observations must keep the exact same target slots. This avoids
-        # animation dips without accepting a target set that ever changes.
+        best_anchor = seed if seed is not None and card_grid_actionable(seed) else None
+        # A strong frame can confirm immediately after the usual three matching
+        # observations. Borderline 6-card frames are also accepted, but only if
+        # every observation clears the consensus floor and keeps the exact same
+        # target pair. Any pair change or truly ambiguous frame aborts the tap.
         for attempt in range(4):
             analysis = analyze_card_grid(self.capture_image())
             if analysis is None or (expected_kind and analysis.kind != expected_kind):
@@ -278,11 +291,13 @@ class CardChallengeSolver:
                 candidate_key = key
             elif key != candidate_key:
                 return None
+            if not card_grid_actionable(analysis):
+                return None
             stable_observations += 1
-            if analysis.confident:
-                confident_anchor = analysis
-            if stable_observations >= 3 and confident_anchor is not None:
-                return confident_anchor
+            if best_anchor is None or analysis.confidence_margin > best_anchor.confidence_margin:
+                best_anchor = analysis
+            if stable_observations >= 3 and best_anchor is not None:
+                return best_anchor
             if attempt < 3 and self._wait_ms(self.timing.consensus_gap_ms):
                 return None
         return None
@@ -316,7 +331,7 @@ class CardChallengeSolver:
         return None
 
     def solve_three_rounds(self, initial: CardGridAnalysis) -> int:
-        if not initial.confident:
+        if not card_grid_actionable(initial):
             raise ChallengeSolveError("พบเกมการ์ดแต่คะแนนแยกคำตอบยังไม่มั่นใจ จึงไม่คลิก")
         current = initial
         if self._wait_ms(self.timing.first_click_delay_ms):
@@ -325,7 +340,7 @@ class CardChallengeSolver:
         while rounds_solved < 3 and not self.stop_event.is_set():
             confirmed = self._await_confirmed_targets(current)
             if confirmed is None:
-                raise ChallengeSolveError("คำตอบเกมการ์ดไม่ตรงกัน 2 เฟรม จึงหยุดก่อนคลิก")
+                raise ChallengeSolveError("คู่คำตอบเกมการ์ดไม่ตรงกันครบ 3 ภาพ จึงหยุดก่อนคลิก")
             self._status(f"เกมการ์ดรอบ {rounds_solved + 1}/3 • จะคลิก {len(confirmed.target_slots)} ใบแบบเรียงลำดับ")
             self._tap_targets(confirmed)
             rounds_solved += 1

@@ -49,7 +49,14 @@
     "consecutive_matches": 3,
     "min_gameplay_seconds": 15,
     "timeout_seconds": 45,
-    "pause_absent_threshold": 0.8
+    "pause_absent_threshold": 0.8,
+    "challenge_enabled": true,
+    "challenge_first_click_delay_ms": 1000,
+    "challenge_inter_card_min_ms": 500,
+    "challenge_inter_card_max_ms": 900,
+    "challenge_next_round_min_ms": 1800,
+    "challenge_next_round_max_ms": 2200,
+    "challenge_transition_timeout_ms": 6500
   },
   "recording": {
     "rapid_tap_to_hold": true,
@@ -58,13 +65,18 @@
   "playback": {
     "repeat_count": 1,
     "loop_forever": true,
-    "loop_interval_ms": 10000,
+    "loop_interval_ms": 8000,
     "pre_sync_extra_ms": 400,
+    "pre_sync_delay_mode": "fixed",
+    "pre_sync_random_min_ms": 300,
+    "pre_sync_random_max_ms": 500,
+    "pre_sync_random_min_delta_ms": 50,
+    "pre_sync_random_history": 3,
     "sync_each_loop": true
   },
   "stats": {
-    "play_count": 55,
-    "last_played_at": "2026-07-23T16:47:54+07:00"
+    "play_count": 57,
+    "last_played_at": "2026-08-06T23:40:43+07:00"
   },
   "events": [
     {

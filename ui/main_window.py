@@ -23,7 +23,9 @@ from challenge_solver import (
     FIVE_CARD_MIN_MARGIN,
     FIVE_CARD_MIN_SCORE,
     SIX_CARD_MIN_MARGIN,
+    SIX_CARD_CONSENSUS_MIN_MARGIN,
     analyze_card_grid,
+    card_grid_actionable,
 )
 from config_manager import ConfigManager
 from event_model import (
@@ -43,6 +45,7 @@ from input_keys import recorder_key_name
 from pattern_store import PatternStore, PatternStoreError, safe_pattern_filename
 from pause_profiles import DEFAULT_PAUSE_PROFILE, PAUSE_TEMPLATE_SIZE, PauseProfileError, PauseProfileStore
 from player import Player
+from popup_cleanup import PopupCleanup, merge_popup_cleanup_config
 from recorder import Recorder, RecorderError, prepare_recording_candidate
 from state import AppState, StateMachine
 from sync_detector import ROI, ResultDetector, SyncDetector, SyncError, SyncResult, crop_roi, decode_png, is_real_fast_roi_source, stable_sync_target, summarize_sync_samples, wait_for_sync_with_retries
@@ -2175,13 +2178,21 @@ class MainWindow:
     @staticmethod
     def _challenge_detection_status(analysis, source: str) -> str:
         if analysis.kind == "six_cards":
-            detail = f"cluster margin {analysis.confidence_margin:.2f}/{SIX_CARD_MIN_MARGIN:.2f}"
+            detail = (
+                f"cluster margin {analysis.confidence_margin:.2f}/"
+                f"{SIX_CARD_MIN_MARGIN:.2f} (ยืนยันซ้ำได้ตั้งแต่ {SIX_CARD_CONSENSUS_MIN_MARGIN:.2f})"
+            )
         else:
             detail = (
                 f"score {analysis.target_score_floor:.2f}/{FIVE_CARD_MIN_SCORE:.2f} • "
                 f"margin {analysis.confidence_margin:.2f}/{FIVE_CARD_MIN_MARGIN:.2f}"
             )
-        verdict = "พร้อมยืนยัน 2 เฟรม" if analysis.confident else "ยังไม่ผ่านเกณฑ์"
+        if analysis.confident:
+            verdict = "พร้อมยืนยันหลายเฟรม"
+        elif card_grid_actionable(analysis):
+            verdict = "ภาพก้ำกึ่ง • กำลังยืนยันคู่เดิมหลายเฟรม"
+        else:
+            verdict = "ยังไม่ผ่านเกณฑ์"
         return (
             f"Surprise Card: พบ {analysis.kind} จาก {source} • {verdict} • "
             f"{detail}"
@@ -2211,9 +2222,9 @@ class MainWindow:
         analysis = analyze_card_grid(screenshot)
         if analysis is None:
             raise ChallengeSolveError("ไม่พบหน้าจอ Surprise Card แบบ 5 หรือ 6 ใบในภาพปัจจุบัน")
-        if not analysis.confident:
+        if not card_grid_actionable(analysis):
             detail = (
-                f"cluster margin {analysis.confidence_margin:.2f}/{SIX_CARD_MIN_MARGIN:.2f}"
+                f"cluster margin {analysis.confidence_margin:.2f}/{SIX_CARD_CONSENSUS_MIN_MARGIN:.2f}"
                 if analysis.kind == "six_cards"
                 else f"score {analysis.target_score_floor:.2f}, margin {analysis.confidence_margin:.2f}"
             )
@@ -2268,7 +2279,7 @@ class MainWindow:
         self.challenge_test_stop = stop_event
         if self.challenge_test_button is not None:
             self.challenge_test_button.configure(state="disabled")
-        self.result_status_var.set("Surprise Card: กำลังตรวจภาพจริง 2 เฟรมก่อนคลิก • กด F8 เพื่อหยุด")
+        self.result_status_var.set("Surprise Card: กำลังยืนยันคู่คำตอบให้ตรงกันครบ 3 ภาพ • กด F8 เพื่อหยุด")
         self.message_var.set("โหมดทดสอบ Surprise Card เท่านั้น • ไม่รัน Pattern/Sync/Post-game")
 
         updates: queue.SimpleQueue[tuple[str, object, object | None]] = queue.SimpleQueue()
@@ -2541,15 +2552,21 @@ class MainWindow:
                             self._challenge_detection_status(a, s)
                         ))
                     if analysis is not None:
+                        actionable = card_grid_actionable(analysis)
                         same = (
+                            actionable
+                            and
                             previous_challenge is not None
                             and previous_challenge.kind == analysis.kind
                             and previous_challenge.target_slots == analysis.target_slots
                         )
-                        challenge_streak = challenge_streak + 1 if same else 1
+                        challenge_streak = challenge_streak + 1 if same else (1 if actionable else 0)
                         if not same:
                             challenge_anchor = None
-                        if analysis.confident:
+                        if actionable and (
+                            challenge_anchor is None
+                            or analysis.confidence_margin > challenge_anchor.confidence_margin
+                        ):
                             challenge_anchor = analysis
                         previous_challenge = analysis
                     else:
@@ -2596,6 +2613,37 @@ class MainWindow:
             return found
         return wait
 
+    def _popup_cleanup_waiter(self, adb: ADBManager, serial: str, pattern: dict):
+        post_game = pattern.get("post_game", {})
+        config = merge_popup_cleanup_config(post_game.get("popup_cleanup"))
+        if not bool(config.get("enabled", True)):
+            return None
+        cleanup = PopupCleanup.from_config(
+            self.project_dir,
+            lambda: adb.capture_image(serial),
+            lambda x, y: adb.shell(serial, f"input tap {x} {y}"),
+            config,
+            on_status=lambda message: self.root.after(
+                0, lambda value=message: self.result_status_var.set(value)
+            ),
+        )
+        if not cleanup.rules:
+            return None
+
+        try:
+            timeout_seconds = max(0.0, int(config.get("timeout_ms", 5000)) / 1000)
+        except (TypeError, ValueError):
+            timeout_seconds = 5.0
+
+        def wait(stop_event: threading.Event, budget_seconds: float) -> None:
+            result = cleanup.run(stop_event, min(float(budget_seconds), timeout_seconds))
+            if result.error:
+                self.root.after(0, lambda value=result.error: self.result_status_var.set(
+                    f"Popup cleanup: ข้ามการกดเพื่อความปลอดภัย ({value})"
+                ))
+
+        return wait
+
     def _play(self) -> None:
         if self._challenge_test_running():
             self._warn_challenge_test_running()
@@ -2637,6 +2685,7 @@ class MainWindow:
                     sync_each_loop=bool(playback.get("sync_each_loop", True)),
                     sync_waiter=self._sync_waiter(adb, serial, pattern),
                     result_waiter=self._result_waiter(adb, serial, pattern) if pattern.get("post_game", {}).get("enabled", True) else None,
+                    popup_cleanup_waiter=self._popup_cleanup_waiter(adb, serial, pattern),
                 )
                 self.root.after(0, lambda: self._player_finished(active_player))
 

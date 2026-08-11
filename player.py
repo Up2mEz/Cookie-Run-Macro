@@ -234,6 +234,27 @@ class Player:
         means = ImageStat.Stat(ImageChops.difference(reference, current)).mean
         return sum(means) / (len(means) * 255.0)
 
+    def _arm_adaptive_after_trigger(
+        self,
+        action: ScheduledAction,
+        serial: str,
+        ready_reference: Image.Image,
+    ) -> Image.Image | None:
+        """Capture the temporary Stop state immediately after random boost starts."""
+        settings = action.adaptive or {}
+        threshold = float(settings.get("change_threshold", 0.12))
+        poll_seconds = min(0.05, int(settings.get("poll_ms", 250)) / 1000)
+        arm_seconds = int(settings.get("arm_delay_ms", 500)) / 1000
+        deadline = time.perf_counter() + max(0.25, arm_seconds)
+        while not self.stop_event.is_set() and time.perf_counter() < deadline:
+            if self.stop_event.wait(poll_seconds):
+                return None
+            current_image, _source = self.adb.capture_image(serial)
+            current = self._adaptive_patch(current_image, settings)
+            if self._adaptive_change_score(ready_reference, current) >= threshold:
+                return current
+        return None
+
     def _wait_for_adaptive_release(
         self,
         action: ScheduledAction,
@@ -243,12 +264,19 @@ class Player:
         round_total: int,
         event_index: int,
         event_total: int,
+        armed_reference: Image.Image | None = None,
     ) -> bool:
         settings = action.adaptive or {}
-        if self.stop_event.wait(int(settings.get("arm_delay_ms", 500)) / 1000):
-            return False
-        reference_image, _source = self.adb.capture_image(serial)
-        reference = self._adaptive_patch(reference_image, settings)
+        if armed_reference is None:
+            if self.stop_event.wait(int(settings.get("arm_delay_ms", 500)) / 1000):
+                return False
+            reference_image, _source = self.adb.capture_image(serial)
+            reference = self._adaptive_patch(reference_image, settings)
+        else:
+            # A fast random-boost roll can finish before the Adaptive event's
+            # recorded timestamp. Use the Stop-button patch captured shortly
+            # after the trigger tap so Play never becomes a stale reference.
+            reference = armed_reference
         threshold = float(settings.get("change_threshold", 0.12))
         required_stable = int(settings.get("stable_frames", 2))
         poll_seconds = int(settings.get("poll_ms", 250)) / 1000
@@ -290,6 +318,7 @@ class Player:
         sync_each_loop: bool = True,
         sync_waiter: Callable[[threading.Event, threading.Event, threading.Event], bool | float] | None = None,
         result_waiter: Callable[[threading.Event, threading.Event, threading.Event, float], bool] | None = None,
+        popup_cleanup_waiter: Callable[[threading.Event, float], None] | None = None,
     ) -> None:
         normalized, _ = normalize_pattern(pattern)
         if not normalized["events"]:
@@ -342,6 +371,7 @@ class Player:
                     )
                     skipped_pre_ids: set[str] = set()
                     adaptive_completed_at: float | None = None
+                    armed_adaptive_references: dict[str, Image.Image] = {}
                     for event_index, action in enumerate(pre_actions, start=1):
                         if action.source_id in skipped_pre_ids:
                             continue
@@ -359,6 +389,7 @@ class Player:
                                 action, serial, round_number=round_number,
                                 round_total=displayed_round_total, event_index=event_index,
                                 event_total=len(pre_actions),
+                                armed_reference=armed_adaptive_references.pop(action.source_id, None),
                             ):
                                 break
                             if not self._shell:
@@ -375,7 +406,18 @@ class Player:
                         else:
                             if not self._shell:
                                 raise ADBError("Persistent ADB shell ไม่พร้อมใช้งาน")
+                            next_action = pre_actions[event_index] if event_index < len(pre_actions) else None
+                            ready_reference: Image.Image | None = None
+                            if next_action is not None and next_action.event_type == ADAPTIVE_WAIT_TYPE:
+                                ready_image, _source = self.adb.capture_image(serial)
+                                ready_reference = self._adaptive_patch(ready_image, next_action.adaptive or {})
                             self._shell.send(self._command(action, normalized["controls"]))
+                            if next_action is not None and ready_reference is not None:
+                                armed_reference = self._arm_adaptive_after_trigger(
+                                    next_action, serial, ready_reference,
+                                )
+                                if armed_reference is not None:
+                                    armed_adaptive_references[next_action.source_id] = armed_reference
                         self._emit_progress(
                             "pre_sync", elapsed=action.at, duration=pre_duration,
                             event_index=event_index, event_total=len(pre_actions),
@@ -536,6 +578,8 @@ class Player:
                     watcher.join(timeout=0.2)
                 if (loop_forever or round_number < repeat_count) and loop_interval:
                     delay_start = time.perf_counter()
+                    if popup_cleanup_waiter and not self.stop_event.is_set():
+                        popup_cleanup_waiter(self.stop_event, loop_interval)
                     if not self._wait_on_timeline(
                         delay_start, loop_interval, phase="loop_delay", duration=loop_interval,
                         event_index=0, event_total=0,

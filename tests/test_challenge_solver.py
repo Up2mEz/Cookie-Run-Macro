@@ -11,8 +11,10 @@ from challenge_solver import (
     ChallengeSolveError,
     ChallengeTiming,
     SIX_CARD_MIN_MARGIN,
+    SIX_CARD_CONSENSUS_MIN_MARGIN,
     _card_grid_confident,
     analyze_card_grid,
+    card_grid_actionable,
 )
 
 
@@ -50,8 +52,16 @@ class _FakeClock:
 class ChallengeAnalyzerTests(unittest.TestCase):
     def test_six_card_real_frame_threshold_uses_requested_margin(self):
         self.assertEqual(SIX_CARD_MIN_MARGIN, 1.8)
+        self.assertEqual(SIX_CARD_CONSENSUS_MIN_MARGIN, 1.0)
         self.assertTrue(_card_grid_confident("six_cards", 4.5, 2.1))
         self.assertFalse(_card_grid_confident("six_cards", 20.0, 1.79))
+
+    def test_borderline_six_card_frame_is_only_actionable_for_consensus(self):
+        strong = analyze_card_grid(_card_screen((1, 5)))
+        borderline = strong.__class__(**{**strong.__dict__, "confident": False, "confidence_margin": 1.59})
+        ambiguous = strong.__class__(**{**strong.__dict__, "confident": False, "confidence_margin": 0.99})
+        self.assertTrue(card_grid_actionable(borderline))
+        self.assertFalse(card_grid_actionable(ambiguous))
 
     def test_sliding_grid_finds_exactly_two_outliers(self):
         analysis = analyze_card_grid(_card_screen((1, 5)))
@@ -112,6 +122,24 @@ class ChallengeAnalyzerTests(unittest.TestCase):
 
 
 class ChallengeSolverTimingTests(unittest.TestCase):
+    def test_three_matching_borderline_frames_confirm_without_a_strong_frame(self):
+        strong = analyze_card_grid(_card_screen((1, 5)))
+        borderline = strong.__class__(**{**strong.__dict__, "confident": False, "confidence_margin": 1.59})
+        analyses = iter((borderline, borderline))
+        clock = _FakeClock()
+        solver = CardChallengeSolver(
+            lambda: _card_screen((1, 5)),
+            lambda _x, _y: None,
+            __import__("threading").Event(),
+            timing=ChallengeTiming(consensus_gap_ms=250),
+            clock=clock.clock,
+            wait=clock.wait,
+        )
+        with patch("challenge_solver.analyze_card_grid", side_effect=lambda _image: next(analyses)):
+            confirmed = solver._capture_confident("six_cards", seed=borderline)
+        self.assertEqual(confirmed.target_slots, (1, 5))
+        self.assertEqual(clock.waits, [0.25])
+
     def test_consensus_keeps_same_targets_across_one_weak_animation_frame(self):
         strong = analyze_card_grid(_card_screen((1, 5)))
         weak = strong.__class__(**{**strong.__dict__, "confident": False, "confidence_margin": 1.5})
